@@ -106,12 +106,13 @@ public class ProxyRepositoryProvider
 
             RemoteRepository remoteRepository = repository.getRemoteRepository();
 
+            /*
             if (!remoteRepositoryAlivenessCacheManager.isAlive(remoteRepository))
             {
-                logger.debug("RemoteRepository {} is not alive" + remoteRepository);
+                logger.debug("RemoteRepository {} is not alive", remoteRepository);
                 return null;
             }
-
+*/
             ArtifactResolver client = new ArtifactResolver(proxyRepositoryConnectionPoolConfigurationService.getClient());
             client.setRepositoryBaseUrl(remoteRepository.getUrl());
             client.setUsername(remoteRepository.getUsername());

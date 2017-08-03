@@ -66,10 +66,11 @@ class RemoteRepositoriesHeartbeatMonitorInitiator
                       "intervalSeconds cannot be negative or zero but was " + intervalSeconds + " for " +
                       remoteRepository.getUrl());
 
+        /*
         executor.scheduleWithFixedDelay(
                 new RemoteRepositoryHeartbeatMonitor(remoteRepositoryCacheManager, remoteRepository), 0,
                 intervalSeconds, TimeUnit.SECONDS);
-
+*/
         logger.info(
                 "Remote repository " + remoteRepository.getUrl() + " scheduled for monitoring with interval seconds " +
                 intervalSeconds);
