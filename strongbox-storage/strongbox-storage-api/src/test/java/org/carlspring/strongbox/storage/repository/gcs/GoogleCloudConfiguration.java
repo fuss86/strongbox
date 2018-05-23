@@ -1,6 +1,7 @@
 package org.carlspring.strongbox.storage.repository.gcs;
 
 import org.carlspring.strongbox.storage.repository.CustomConfiguration;
+import org.carlspring.strongbox.storage.repository.ImmutableCustomConfiguration;
 import org.carlspring.strongbox.xml.CustomTag;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -10,7 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author carlspring
  */
 @XmlRootElement(name = "google-cloud-configuration")
-public class GoogleCloudConfiguration extends CustomConfiguration
+public class GoogleCloudConfiguration
+        extends CustomConfiguration
         implements CustomTag
 {
 
@@ -41,4 +43,9 @@ public class GoogleCloudConfiguration extends CustomConfiguration
         this.key = key;
     }
 
+    @Override
+    public ImmutableCustomConfiguration getImmutable()
+    {
+        return new ImmutableGoogleCloudConfiguration(this);
+    }
 }

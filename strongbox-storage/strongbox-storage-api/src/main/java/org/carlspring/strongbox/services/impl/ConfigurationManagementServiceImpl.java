@@ -3,10 +3,7 @@ package org.carlspring.strongbox.services.impl;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationFileManager;
 import org.carlspring.strongbox.configuration.ProxyConfiguration;
-import org.carlspring.strongbox.data.service.SingletonCrudService;
-import org.carlspring.strongbox.data.service.SingletonEntityProvider;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
-import org.carlspring.strongbox.services.ConfigurationService;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.repository.HttpConnectionPool;
 import org.carlspring.strongbox.storage.repository.Repository;
@@ -16,8 +13,11 @@ import org.carlspring.strongbox.storage.routing.RoutingRules;
 import org.carlspring.strongbox.storage.routing.RuleSet;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,26 +28,15 @@ import org.springframework.stereotype.Service;
 /**
  * @author mtodorov
  */
-@Transactional
 @Service
 public class ConfigurationManagementServiceImpl
-        extends SingletonEntityProvider<Configuration, String>
         implements ConfigurationManagementService
 {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationManagementService.class);
 
     @Inject
-    private ConfigurationService configurationService;
-
-    @Inject
     private ConfigurationFileManager configurationFileManager;
-
-    @Override
-    public SingletonCrudService<Configuration, String> getService()
-    {
-        return configurationService;
-    }
 
     @Override
     protected void postSave(final Configuration configuration)

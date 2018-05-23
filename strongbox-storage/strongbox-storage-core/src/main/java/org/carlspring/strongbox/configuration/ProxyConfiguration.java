@@ -1,7 +1,10 @@
 package org.carlspring.strongbox.configuration;
 
-import javax.persistence.Embeddable;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +15,6 @@ import com.google.common.base.Objects;
 /**
  * @author mtodorov
  */
-@Embeddable
 @XmlRootElement(name = "proxy-configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProxyConfiguration
@@ -36,7 +38,7 @@ public class ProxyConfiguration
      */
     @XmlAttribute
     private String type;
-    
+
     @XmlElementWrapper(name = "non-proxy-hosts")
     private List<String> nonProxyHosts = new ArrayList<>();
 

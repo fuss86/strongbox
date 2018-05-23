@@ -1,6 +1,7 @@
 package org.carlspring.strongbox.xml.configuration.repository;
 
 import org.carlspring.strongbox.xml.repository.CustomRepositoryConfiguration;
+import org.carlspring.strongbox.xml.repository.ImmutableCustomRepositoryConfiguration;
 
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,5 +48,11 @@ public class MavenRepositoryConfiguration
     public void setIndexingClassNamesEnabled(final boolean indexingClassNamesEnabled)
     {
         this.indexingClassNamesEnabled = indexingClassNamesEnabled;
+    }
+
+    @Override
+    public ImmutableCustomRepositoryConfiguration getImmutable()
+    {
+        return new ImmutableMavenRepositoryConfiguration(this);
     }
 }
