@@ -5,8 +5,8 @@ import org.carlspring.strongbox.event.repository.RepositoryEvent;
 import org.carlspring.strongbox.event.repository.RepositoryEventListener;
 import org.carlspring.strongbox.event.repository.RepositoryEventTypeEnum;
 import org.carlspring.strongbox.services.TrustStoreService;
-import org.carlspring.strongbox.storage.repository.Repository;
-import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class RepositoryCreatedEventListener
             return;
         }
 
-        Repository repository = configurationManager.getConfiguration().getStorage(event.getStorageId()).getRepository(
+        ImmutableRepository repository = configurationManager.getConfiguration().getStorage(event.getStorageId()).getRepository(
                 event.getRepositoryId());
 
         if (repository.getRemoteRepository() != null)
@@ -49,7 +49,7 @@ public class RepositoryCreatedEventListener
         }
     }
 
-    private void initializeRemoteRepository(RemoteRepository remoteRepository)
+    private void initializeRemoteRepository(ImmutableRemoteRepository remoteRepository)
     {
         if (remoteRepository.isAutoImportRemoteSSLCertificate())
         {

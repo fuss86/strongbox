@@ -3,6 +3,7 @@ package org.carlspring.strongbox.services;
 import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategyException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 
 import java.io.IOException;
@@ -42,6 +43,6 @@ public interface RepositoryManagementService
 
     void putOutOfService(String storageId, String repositoryId);
 
-    Storage getStorage(String storageId);
+    ImmutableStorage getStorage(String storageId);
 
 }

@@ -6,16 +6,16 @@ package org.carlspring.strongbox.configuration;
 public class ImmutableSessionConfiguration
 {
 
-    private final SessionConfiguration delegate;
+    private final Integer timeoutSeconds;
 
 
     public ImmutableSessionConfiguration(final SessionConfiguration delegate)
     {
-        this.delegate = delegate;
+        this.timeoutSeconds = delegate.getTimeoutSeconds();
     }
 
     public Integer getTimeoutSeconds()
     {
-        return delegate.getTimeoutSeconds();
+        return timeoutSeconds;
     }
 }

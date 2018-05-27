@@ -18,7 +18,9 @@ import org.carlspring.strongbox.providers.repository.RepositoryProviderRegistry;
 import org.carlspring.strongbox.services.ArtifactResolutionService;
 import org.carlspring.strongbox.storage.ArtifactResolutionException;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.resource.ArtifactOperationsValidator;
 import org.springframework.stereotype.Component;
@@ -48,7 +50,7 @@ public class ArtifactResolutionServiceImpl
     public RepositoryInputStream getInputStream(RepositoryPath path)
         throws IOException
     {
-        Repository repository = path.getFileSystem().getRepository();
+        ImmutableRepository repository = path.getFileSystem().getRepository();
         artifactOperationsValidator.validate(path);
         
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
@@ -68,7 +70,7 @@ public class ArtifactResolutionServiceImpl
     {
         artifactOperationsValidator.validate(repositoryPath);
 
-        Repository repository = repositoryPath.getRepository();
+        ImmutableRepository repository = repositoryPath.getRepository();
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         RepositoryOutputStream os = repositoryProvider.getOutputStream(repositoryPath);
@@ -80,7 +82,7 @@ public class ArtifactResolutionServiceImpl
         return os;
     }
 
-    public Storage getStorage(String storageId)
+    public ImmutableStorage getStorage(String storageId)
     {
         return configurationManager.getConfiguration().getStorage(storageId);
     }
@@ -91,8 +93,8 @@ public class ArtifactResolutionServiceImpl
     {
         URI baseUri = configurationManager.getBaseUri();
 
-        Repository repository = repositoryPath.getRepository();
-        Storage storage = repository.getStorage();
+        ImmutableRepository repository = repositoryPath.getRepository();
+        ImmutableStorage storage = repository.getStorage();
         URI artifactResource = RepositoryFiles.resolveResource(repositoryPath);
 
         return UriComponentsBuilder.fromUri(baseUri)
@@ -110,8 +112,8 @@ public class ArtifactResolutionServiceImpl
            throws IOException
     {        
         RepositoryPath repositoryPath = repositoryPathResolver.resolve(storageId, repositoryId, artifactPath);
-        
-        Repository repository = repositoryPath.getRepository();
+
+        ImmutableRepository repository = repositoryPath.getRepository();
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
         
         return (RepositoryPath)repositoryProvider.fetchPath(repositoryPath);

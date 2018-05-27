@@ -1,33 +1,26 @@
 package org.carlspring.strongbox.providers.repository.proxied;
 
-import org.carlspring.strongbox.client.ArtifactTransportException;
 import org.carlspring.strongbox.client.CloseableRestResponse;
 import org.carlspring.strongbox.client.RestArtifactResolver;
 import org.carlspring.strongbox.client.RestArtifactResolverFactory;
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.event.artifact.ArtifactEventListenerRegistry;
-import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.io.RepositoryFileAttributes;
 import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
-import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
-import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoryAlivenessCacheManager;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-
 import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
 
 import org.slf4j.Logger;
 
@@ -53,9 +46,9 @@ public abstract class ProxyRepositoryArtifactResolver
     protected RestArtifactResolverFactory restArtifactResolverFactory;
 
     public InputStream getInputStream(RepositoryPath repositoryPath)
-        throws IOException
+            throws IOException
     {
-        Repository repository = repositoryPath.getFileSystem().getRepository();
+        ImmutableRepository repository = repositoryPath.getFileSystem().getRepository();
         getLogger().debug(String.format("Checking in [%s]...", repositoryPath));
 
         final InputStream candidate = preProxyRepositoryAccessAttempt(repositoryPath);
@@ -64,7 +57,7 @@ public abstract class ProxyRepositoryArtifactResolver
             return candidate;
         }
 
-        final RemoteRepository remoteRepository = repository.getRemoteRepository();
+        final ImmutableRemoteRepository remoteRepository = repository.getRemoteRepository();
         if (!remoteRepositoryAlivenessCacheManager.isAlive(remoteRepository))
         {
             getLogger().debug("Remote repository '" + remoteRepository.getUrl() + "' is down.");
@@ -122,7 +115,7 @@ public abstract class ProxyRepositoryArtifactResolver
 
     protected abstract Logger getLogger();
 
-    protected Configuration getConfiguration()
+    protected ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

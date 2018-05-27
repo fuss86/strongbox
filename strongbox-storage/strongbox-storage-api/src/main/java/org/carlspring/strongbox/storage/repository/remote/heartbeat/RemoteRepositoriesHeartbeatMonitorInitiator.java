@@ -3,7 +3,9 @@ package org.carlspring.strongbox.storage.repository.remote.heartbeat;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.log.CronTaskContextFilter;
 import org.carlspring.strongbox.log.LoggingUtils;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.monitor.RemoteRepositoryHeartbeatMonitorStrategy;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.monitor.RemoteRepositoryHeartbeatMonitorStrategyRegistry;
@@ -65,7 +67,7 @@ public class RemoteRepositoriesHeartbeatMonitorInitiator
     }
 
     private void scheduleRemoteRepositoryMonitoring(int defaultIntervalSeconds,
-                                                    RemoteRepository remoteRepository)
+                                                    ImmutableRemoteRepository remoteRepository)
     {
         int intervalSeconds = ObjectUtils.defaultIfNull(remoteRepository.getCheckIntervalSeconds(),
                                                         defaultIntervalSeconds);
@@ -86,21 +88,21 @@ public class RemoteRepositoriesHeartbeatMonitorInitiator
                 intervalSeconds);
     }
 
-    private RemoteRepositoryHeartbeatMonitorStrategy determineMonitorStrategy(final RemoteRepository remoteRepository)
+    private RemoteRepositoryHeartbeatMonitorStrategy determineMonitorStrategy(final ImmutableRemoteRepository remoteRepository)
     {
         return remoteRepositoryHeartbeatMonitorStrategyRegistry.of(
                 remoteRepository.isAllowsDirectoryBrowsing());
     }
 
 
-    private List<RemoteRepository> getRemoteRepositories()
+    private List<ImmutableRemoteRepository> getRemoteRepositories()
     {
         return configurationManager.getConfiguration()
                                    .getStorages()
                                    .values()
                                    .stream()
                                    .flatMap(s -> s.getRepositories().values().stream())
-                                   .filter(Repository::isProxyRepository)
+                                   .filter(ImmutableRepository::isProxyRepository)
                                    .map(r -> r.getRemoteRepository())
                                    .collect(Collectors.toList());
     }

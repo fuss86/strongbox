@@ -4,11 +4,14 @@ import org.carlspring.strongbox.artifact.locator.ArtifactDirectoryLocator;
 import org.carlspring.strongbox.artifact.locator.handlers.ArtifactLocationGenerateChecksumOperation;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.services.ChecksumService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -39,8 +42,8 @@ public class ChecksumServiceImpl
                                    boolean forceRegeneration)
         throws IOException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         if (layoutProvider == null)
@@ -60,7 +63,7 @@ public class ChecksumServiceImpl
         locator.locateArtifactDirectories();
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

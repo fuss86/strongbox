@@ -12,36 +12,60 @@ import jersey.repackaged.com.google.common.collect.ImmutableList;
 public class ImmutableProxyConfiguration
 {
 
-    private final ProxyConfiguration delegate;
+    private final String host;
+
+    private final int port;
+
+    private final String username;
+
+    private final String password;
+
+    private final String type;
+
+    private final List<String> nonProxyHosts;
 
     public ImmutableProxyConfiguration(final ProxyConfiguration delegate)
     {
-        this.delegate = delegate;
+        this.host = delegate.getHost();
+        this.port = delegate.getPort();
+        this.username = delegate.getUsername();
+        this.password = delegate.getPassword();
+        this.type = delegate.getType();
+        this.nonProxyHosts = immuteNonProxyHosts(delegate.getNonProxyHosts());
+    }
+
+    private List<String> immuteNonProxyHosts(final List<String> source)
+    {
+        return nonProxyHosts != null ? ImmutableList.copyOf(source) : Collections.emptyList();
+    }
+
+    public String getHost()
+    {
+        return host;
     }
 
     public int getPort()
     {
-        return delegate.getPort();
+        return port;
     }
 
     public String getUsername()
     {
-        return delegate.getUsername();
+        return username;
     }
 
     public String getPassword()
     {
-        return delegate.getPassword();
+        return password;
     }
 
     public String getType()
     {
-        return delegate.getType();
+        return type;
     }
 
     public List<String> getNonProxyHosts()
     {
-        final List<String> nonProxyHosts = delegate.getNonProxyHosts();
-        return nonProxyHosts != null ? ImmutableList.copyOf(nonProxyHosts) : Collections.emptyList();
+        return nonProxyHosts;
     }
 }

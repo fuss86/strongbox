@@ -1,7 +1,9 @@
 package org.carlspring.strongbox.providers.io;
 
 import org.carlspring.strongbox.domain.ArtifactEntry;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.util.PathUtils;
 
@@ -68,7 +70,7 @@ public class RepositoryPath
         return fileSystem;
     }
     
-    public Repository getRepository()
+    public ImmutableRepository getRepository()
     {
         return getFileSystem().getRepository();
     }
@@ -232,9 +234,9 @@ public class RepositoryPath
         {
             return uri;
         }
-        
-        Repository repository = getFileSystem().getRepository();
-        Storage storage = repository.getStorage();
+
+        ImmutableRepository repository = getFileSystem().getRepository();
+        ImmutableStorage storage = repository.getStorage();
         URI result = null;
         try
         {

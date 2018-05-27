@@ -1,11 +1,15 @@
 package org.carlspring.strongbox.providers.layout;
 
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.AbstractMappedProviderRegistry;
 import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.io.RootRepositoryPath;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +30,9 @@ public class LayoutProviderRegistry extends AbstractMappedProviderRegistry<Layou
 {
 
     private static final Logger logger = LoggerFactory.getLogger(LayoutProviderRegistry.class);
+
+    @Inject
+    private ConfigurationManager configurationManager;
 
     @Inject
     private ConfigurationManagementService configurationManagementService;
@@ -61,12 +68,12 @@ public class LayoutProviderRegistry extends AbstractMappedProviderRegistry<Layou
     public void undeleteTrash()
             throws ProviderImplementationException
     {
-        for (Map.Entry entry : getConfiguration().getStorages().entrySet())
+        for (Map.Entry<String, ImmutableStorage> entry : getConfiguration().getStorages().entrySet())
         {
-            Storage storage = (Storage) entry.getValue();
+            ImmutableStorage storage = entry.getValue();
 
-            final Map<String, Repository> repositories = storage.getRepositories();
-            for (Repository repository : repositories.values())
+            final Map<String, ImmutableRepository> repositories = storage.getRepositories();
+            for (ImmutableRepository repository : repositories.values())
             {
                 LayoutProvider layoutProvider = getLayoutProvider(repository, this);
 
@@ -120,49 +127,9 @@ public class LayoutProviderRegistry extends AbstractMappedProviderRegistry<Layou
     {
         LayoutProvider layoutProvider = super.addProvider(alias, provider);
 
-        setRepositoryArtifactCoordinateValidators();
+        configurationManagementService.setRepositoryArtifactCoordinateValidators();
 
         return layoutProvider;
-    }
-
-    public void setRepositoryArtifactCoordinateValidators()
-    {
-        final Configuration configuration = getConfiguration();
-        final Map<String, Storage> storages = configuration.getStorages();
-
-        if (storages != null && !storages.isEmpty())
-        {
-            for (Storage storage : storages.values())
-            {
-                if (storage.getRepositories() != null && !storage.getRepositories().isEmpty())
-                {
-                    for (Repository repository : storage.getRepositories().values())
-                    {
-                        LayoutProvider layoutProvider = getProvider(repository.getLayout());
-
-                        // Generally, this should not happen. However, there are at least two cases where it may occur:
-                        // 1) During testing -- various modules are not added as dependencies and a layout provider
-                        //    is thus not registered.
-                        // 2) Syntax error, or some other mistake leading to an incorrectly defined layout
-                        //    for a repository.
-                        if (layoutProvider != null)
-                        {
-                            @SuppressWarnings("unchecked")
-                            Set<String> defaultArtifactCoordinateValidators = layoutProvider.getDefaultArtifactCoordinateValidators();
-                            if ((repository.getArtifactCoordinateValidators() == null ||
-                                 (repository.getArtifactCoordinateValidators() != null &&
-                                  repository.getArtifactCoordinateValidators().isEmpty())) &&
-                                defaultArtifactCoordinateValidators != null)
-                            {
-                                repository.setArtifactCoordinateValidators(defaultArtifactCoordinateValidators);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        configurationManagementService.save(configuration);
     }
 
     @Override
@@ -171,21 +138,21 @@ public class LayoutProviderRegistry extends AbstractMappedProviderRegistry<Layou
         super.removeProvider(alias);
     }
 
-    public static LayoutProvider getLayoutProvider(Repository repository,
+    public static LayoutProvider getLayoutProvider(ImmutableRepository repository,
                                                    LayoutProviderRegistry layoutProviderRegistry)
             throws ProviderImplementationException
     {
         return layoutProviderRegistry.getProvider(repository.getLayout());
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
-        return configurationManagementService.getConfiguration();
+        return configurationManager.getConfiguration();
     }
 
-    public Storage getStorage(String storageId)
+    public ImmutableStorage getStorage(String storageId)
     {
-        return configurationManagementService.getConfiguration()
+        return configurationManager.getConfiguration()
                                              .getStorage(storageId);
     }
 

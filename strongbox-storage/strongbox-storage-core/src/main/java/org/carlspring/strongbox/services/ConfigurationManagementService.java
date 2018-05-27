@@ -17,21 +17,13 @@ import java.util.List;
 public interface ConfigurationManagementService
 {
 
-    Configuration getConfiguration();
-
     void setConfiguration(Configuration configuration);
 
     void save(Configuration Configuration);
 
-    String getInstanceName();
-
     void setInstanceName(String instanceName);
 
-    String getBaseUrl();
-
     void setBaseUrl(String baseUrl);
-
-    int getPort();
 
     void setPort(int port);
 
@@ -41,23 +33,10 @@ public interface ConfigurationManagementService
 
     void saveStorage(Storage storage);
 
-    Storage getStorage(String storageId);
-
     void removeStorage(String storageId);
 
     void saveRepository(String storageId,
                         Repository repository);
-
-    Repository getRepository(String storageId,
-                             String repositoryId);
-
-    List<Repository> getRepositoriesWithLayout(String storageId,
-                                               String layout);
-
-    List<Repository> getGroupRepositories();
-
-    List<Repository> getGroupRepositoriesContaining(String storageId,
-                                                    String repositoryId);
 
     void removeRepositoryFromAssociatedGroups(String storageId,
                                               String repositoryId);
@@ -65,14 +44,9 @@ public interface ConfigurationManagementService
     void removeRepository(String storageId,
                           String repositoryId);
 
-    ProxyConfiguration getProxyConfiguration();
-
     void setProxyRepositoryMaxConnections(String storageId,
                                           String repositoryId,
                                           int numberOfConnections);
-
-    HttpConnectionPool getHttpConnectionPoolConfiguration(String storageId,
-                                                          String repositoryId);
 
     boolean saveAcceptedRuleSet(RuleSet ruleSet);
 
@@ -90,5 +64,11 @@ public interface ConfigurationManagementService
     boolean overrideAcceptedRepositories(String groupRepository,
                                          RoutingRule routingRule);
 
-    RoutingRules getRoutingRules();
+    void setRepositoryArtifactCoordinateValidators();
+
+    void putInService(String storageId,
+                      String repositoryId);
+
+    void putOutOfService(String storageId,
+                         String repositoryId);
 }

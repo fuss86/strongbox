@@ -4,6 +4,7 @@ import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
 import org.carlspring.strongbox.client.ArtifactTransportException;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.domain.ArtifactEntry;
 import org.carlspring.strongbox.event.artifact.ArtifactEventListenerRegistry;
 import org.carlspring.strongbox.io.ArtifactOutputStream;
@@ -19,9 +20,11 @@ import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.providers.search.SearchException;
 import org.carlspring.strongbox.services.support.ArtifactByteStreamsCopyStrategyDeterminator;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.checksum.ArtifactChecksum;
 import org.carlspring.strongbox.storage.checksum.ChecksumCacheManager;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.ArtifactCoordinatesValidator;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidationException;
@@ -106,8 +109,8 @@ public class ArtifactManagementService
                    NoSuchAlgorithmException,
                    ArtifactCoordinatesValidationException
     {
-        Storage storage = layoutProviderRegistry.getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = layoutProviderRegistry.getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         RepositoryPath repositoryPath = layoutProvider.resolve(repository).resolve(path);
 
@@ -197,7 +200,7 @@ public class ArtifactManagementService
     {
         ArtifactOutputStream aos = StreamUtils.findSource(ArtifactOutputStream.class, os);
 
-        Repository repository = repositoryPath.getRepository();
+        ImmutableRepository repository = repositoryPath.getRepository();
 
         Boolean checksumAttribute = RepositoryFiles.isChecksum(repositoryPath);
 
@@ -307,7 +310,7 @@ public class ArtifactManagementService
     {
         logger.info(String.format("Validate artifact with path [%s]", path));
 
-        Repository repository = path.getFileSystem().getRepository();
+        ImmutableRepository repository = path.getFileSystem().getRepository();
 
         artifactOperationsValidator.validate(path);
 
@@ -341,12 +344,12 @@ public class ArtifactManagementService
         return true;
     }
 
-    protected Storage getStorage(String storageId)
+    protected ImmutableStorage getStorage(String storageId)
     {
         return getConfiguration().getStorages().get(storageId);
     }
 
-    protected Configuration getConfiguration()
+    protected ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }
@@ -383,7 +386,7 @@ public class ArtifactManagementService
     {
         artifactOperationsValidator.validate(repositoryPath);
 
-        final Repository repository = repositoryPath.getRepository();
+        final ImmutableRepository repository = repositoryPath.getRepository();
 
         artifactOperationsValidator.checkAllowsDeletion(repository);
 

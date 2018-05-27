@@ -3,10 +3,15 @@ package org.carlspring.strongbox.services.impl;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationFileManager;
 import org.carlspring.strongbox.configuration.ProxyConfiguration;
+import org.carlspring.strongbox.event.repository.RepositoryEvent;
+import org.carlspring.strongbox.event.repository.RepositoryEventListenerRegistry;
+import org.carlspring.strongbox.event.repository.RepositoryEventTypeEnum;
+import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.repository.HttpConnectionPool;
 import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.repository.RepositoryStatusEnum;
 import org.carlspring.strongbox.storage.repository.RepositoryTypeEnum;
 import org.carlspring.strongbox.storage.routing.RoutingRule;
 import org.carlspring.strongbox.storage.routing.RoutingRules;
@@ -18,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +43,9 @@ public class ConfigurationManagementServiceImpl
 
     @Inject
     private ConfigurationFileManager configurationFileManager;
+
+    @Inject
+    private RepositoryEventListenerRegistry repositoryEventListenerRegistry;
 
     @Override
     protected void postSave(final Configuration configuration)
@@ -475,6 +484,78 @@ public class ConfigurationManagementServiceImpl
                 }
             }
         }
+    }
+
+    @Override
+    public void setRepositoryArtifactCoordinateValidators()
+    {
+        final Configuration configuration = getConfiguration();
+        final Map<String, Storage> storages = configuration.getStorages();
+
+        if (storages != null && !storages.isEmpty())
+        {
+            for (Storage storage : storages.values())
+            {
+                if (storage.getRepositories() != null && !storage.getRepositories().isEmpty())
+                {
+                    for (Repository repository : storage.getRepositories().values())
+                    {
+                        LayoutProvider layoutProvider = getProvider(repository.getLayout());
+
+                        // Generally, this should not happen. However, there are at least two cases where it may occur:
+                        // 1) During testing -- various modules are not added as dependencies and a layout provider
+                        //    is thus not registered.
+                        // 2) Syntax error, or some other mistake leading to an incorrectly defined layout
+                        //    for a repository.
+                        if (layoutProvider != null)
+                        {
+                            @SuppressWarnings("unchecked")
+                            Set<String> defaultArtifactCoordinateValidators = layoutProvider.getDefaultArtifactCoordinateValidators();
+                            if ((repository.getArtifactCoordinateValidators() == null ||
+                                 (repository.getArtifactCoordinateValidators() != null &&
+                                  repository.getArtifactCoordinateValidators().isEmpty())) &&
+                                defaultArtifactCoordinateValidators != null)
+                            {
+                                repository.setArtifactCoordinateValidators(defaultArtifactCoordinateValidators);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        save(configuration);
+    }
+
+    @Override
+    public void putInService(final String storageId,
+                             final String repositoryId)
+    {
+        getConfiguration().getStorage(storageId)
+                          .getRepository(repositoryId)
+                          .setStatus(RepositoryStatusEnum.IN_SERVICE.getStatus());
+
+        RepositoryEvent event = new RepositoryEvent(storageId,
+                                                    repositoryId,
+                                                    RepositoryEventTypeEnum.EVENT_REPOSITORY_PUT_IN_SERVICE.getType());
+
+        repositoryEventListenerRegistry.dispatchEvent(event);
+    }
+
+    @Override
+    public void putOutOfService(final String storageId,
+                                final String repositoryId)
+    {
+        getConfiguration().getStorage(storageId)
+                          .getRepository(repositoryId)
+                          .setStatus(RepositoryStatusEnum.OUT_OF_SERVICE.getStatus());
+
+        RepositoryEvent event = new RepositoryEvent(storageId,
+                                                    repositoryId,
+                                                    RepositoryEventTypeEnum.EVENT_REPOSITORY_PUT_OUT_OF_SERVICE
+                                                            .getType());
+
+        repositoryEventListenerRegistry.dispatchEvent(event);
     }
 
 }

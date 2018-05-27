@@ -9,20 +9,23 @@ public class ImmutableGoogleCloudConfiguration
         extends ImmutableCustomConfiguration
 {
 
-    private final GoogleCloudConfiguration delegate;
+    private final String bucket;
+
+    private final String key;
 
     public ImmutableGoogleCloudConfiguration(final GoogleCloudConfiguration delegate)
     {
-        this.delegate = delegate;
+        this.bucket = delegate.getBucket();
+        this.key = delegate.getKey();
     }
 
     public String getBucket()
     {
-        return delegate.getBucket();
+        return bucket;
     }
 
     public String getKey()
     {
-        return delegate.getKey();
+        return key;
     }
 }

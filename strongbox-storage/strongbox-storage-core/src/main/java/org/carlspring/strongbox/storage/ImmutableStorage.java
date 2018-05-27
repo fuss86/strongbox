@@ -3,6 +3,7 @@ package org.carlspring.strongbox.storage;
 import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
+import java.util.Collections;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -14,49 +15,47 @@ import static java.util.stream.Collectors.toMap;
 public class ImmutableStorage
 {
 
-    private final Storage delegate;
+    private final String id;
 
+    private final String basedir;
+
+    private final Map<String, ImmutableRepository> repositories;
 
     public ImmutableStorage(final Storage delegate)
     {
-        this.delegate = delegate;
+        this.id = delegate.getId();
+        this.basedir = delegate.getBasedir();
+        this.repositories = immuteRepositories(delegate.getRepositories());
     }
 
-    public boolean containsRepository(final String repository)
+    private Map<String, ImmutableRepository> immuteRepositories(final Map<String, Repository> source)
     {
-        return delegate.containsRepository(repository);
-    }
-
-    public String getId()
-    {
-        return delegate.getId();
-    }
-
-    public String getBasedir()
-    {
-        return delegate.getBasedir();
-    }
-
-    public Map<String, ImmutableRepository> getRepositories()
-    {
-        final Map<String, Repository> source = delegate.getRepositories();
         return source != null ? ImmutableMap.copyOf(source.entrySet().stream().collect(
-                toMap(Map.Entry::getKey, e -> new ImmutableRepository(e.getValue())))) : null;
+                toMap(Map.Entry::getKey, e -> new ImmutableRepository(e.getValue())))) : Collections.emptyMap();
     }
 
     public ImmutableRepository getRepository(final String repositoryId)
     {
-        final Repository source = delegate.getRepository(repositoryId);
-        return source != null ? new ImmutableRepository(source) : null;
+        return repositories.get(repositoryId);
     }
 
-    public boolean hasRepositories()
+    public boolean containsRepository(final String repository)
     {
-        return delegate.hasRepositories();
+        return repositories.containsKey(repository);
     }
 
-    public boolean existsOnFileSystem()
+    public String getId()
     {
-        return delegate.existsOnFileSystem();
+        return id;
+    }
+
+    public String getBasedir()
+    {
+        return basedir;
+    }
+
+    public Map<String, ImmutableRepository> getRepositories()
+    {
+        return repositories;
     }
 }

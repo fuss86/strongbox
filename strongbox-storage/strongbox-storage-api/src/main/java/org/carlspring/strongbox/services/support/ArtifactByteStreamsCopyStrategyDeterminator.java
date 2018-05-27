@@ -2,6 +2,7 @@ package org.carlspring.strongbox.services.support;
 
 import org.carlspring.strongbox.services.ArtifactByteStreamsCopyStrategy;
 import org.carlspring.strongbox.services.impl.SimpleArtifactByteStreamsCopy;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ public class ArtifactByteStreamsCopyStrategyDeterminator
 
     private ArtifactByteStreamsCopyStrategy simpleArtifactByteStreams = SimpleArtifactByteStreamsCopy.INSTANCE;
 
-    public ArtifactByteStreamsCopyStrategy determine(final Repository repository)
+    public ArtifactByteStreamsCopyStrategy determine(final ImmutableRepository repository)
     {
         return repository.isProxyRepository() ? proxyRepositoryArtifactByteStreamsCopy : simpleArtifactByteStreams;
 

@@ -33,7 +33,9 @@ import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.providers.repository.group.GroupRepositorySetCollector;
 import org.carlspring.strongbox.services.support.ArtifactRoutingRulesChecker;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,8 +89,8 @@ public class GroupRepositoryProvider extends AbstractRepositoryProvider
     
     protected RepositoryPath resolvePathTraversal(RepositoryPath repositoryPath) throws IOException
     {
-        Repository groupRepository = repositoryPath.getRepository();
-        Storage storage = groupRepository.getStorage();
+        ImmutableRepository groupRepository = repositoryPath.getRepository();
+        ImmutableStorage storage = groupRepository.getStorage();
         String path = RepositoryFiles.stringValue(repositoryPath);
         
         for (String storageAndRepositoryId : groupRepository.getGroupRepositories().keySet())
@@ -96,7 +98,7 @@ public class GroupRepositoryProvider extends AbstractRepositoryProvider
             String sId = getConfigurationManager().getStorageId(storage, storageAndRepositoryId);
             String rId = getConfigurationManager().getRepositoryId(storageAndRepositoryId);
 
-            Repository r = getConfiguration().getStorage(sId).getRepository(rId);
+            ImmutableRepository r = getConfiguration().getStorage(sId).getRepository(rId);
             if (!r.isInService())
             {
                 continue;
@@ -146,7 +148,7 @@ public class GroupRepositoryProvider extends AbstractRepositoryProvider
     protected RepositoryPath resolvePathFromGroupMemberOrTraverse(RepositoryPath repositoryPath)
         throws IOException
     {
-        Repository repository = repositoryPath.getRepository();
+        ImmutableRepository repository = repositoryPath.getRepository();
         if (getAlias().equals(repository.getType()))
         {
             return resolvePathTraversal(repositoryPath);
@@ -185,9 +187,9 @@ public class GroupRepositoryProvider extends AbstractRepositoryProvider
 
         Map<ArtifactCoordinates, Path> resultMap = new LinkedHashMap<>();
 
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository groupRepository = storage.getRepository(repositoryId);
-        Set<Repository> groupRepositorySet = groupRepositorySetCollector.collect(groupRepository);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository groupRepository = storage.getRepository(repositoryId);
+        Set<ImmutableRepository> groupRepositorySet = groupRepositorySetCollector.collect(groupRepository);
 
         if (groupRepositorySet.isEmpty())
         {
@@ -212,9 +214,9 @@ public class GroupRepositoryProvider extends AbstractRepositoryProvider
 
             groupLimit = 0;
 
-            for (Iterator<Repository> i = groupRepositorySet.iterator(); i.hasNext();)
+            for (Iterator<ImmutableRepository> i = groupRepositorySet.iterator(); i.hasNext();)
             {
-                Repository r = i.next();
+                ImmutableRepository r = i.next();
                 RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(r.getType());
 
                 List<Path> repositoryResult = repositoryProvider.search(r.getStorage().getId(), r.getId(), predicate, paginatorLocal);
@@ -274,9 +276,9 @@ public class GroupRepositoryProvider extends AbstractRepositoryProvider
     {
         logger.debug(String.format("Count in [%s]:[%s] ...", storageId, repositoryId));
         
-        Storage storage = getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
 
-        Repository groupRepository = storage.getRepository(repositoryId);
+        ImmutableRepository groupRepository = storage.getRepository(repositoryId);
 
         Predicate p = Predicate.empty();
         

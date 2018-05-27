@@ -1,8 +1,8 @@
 package org.carlspring.strongbox.providers.repository.group;
 
 import org.carlspring.strongbox.configuration.ConfigurationManager;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 
 import javax.inject.Inject;
 import java.util.Iterator;
@@ -23,30 +23,30 @@ public class GroupRepositorySetCollector
     @Inject
     private ConfigurationManager configurationManager;
 
-    public Set<Repository> collect(Repository groupRepository)
+    public Set<ImmutableRepository> collect(ImmutableRepository groupRepository)
     {
         return collect(groupRepository, false);
     }
 
-    public Set<Repository> collect(Repository groupRepository,
-                                   boolean traverse)
+    public Set<ImmutableRepository> collect(ImmutableRepository groupRepository,
+                                            boolean traverse)
     {
-        Set<Repository> result = groupRepository.getGroupRepositories()
-                                                .keySet()
-                                                .stream()
-                                                .map(groupRepoId -> getRepository(groupRepository.getStorage(),
-                                                                                  groupRepoId))
-                                                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<ImmutableRepository> result = groupRepository.getGroupRepositories()
+                                                         .keySet()
+                                                         .stream()
+                                                         .map(groupRepoId -> getRepository(groupRepository.getStorage(),
+                                                                                           groupRepoId))
+                                                         .collect(Collectors.toCollection(LinkedHashSet::new));
 
         if (!traverse)
         {
             return result;
         }
 
-        Set<Repository> traverseResult = new LinkedHashSet<>();
-        for (Iterator<Repository> i = result.iterator(); i.hasNext(); )
+        Set<ImmutableRepository> traverseResult = new LinkedHashSet<>();
+        for (Iterator<ImmutableRepository> i = result.iterator(); i.hasNext(); )
         {
-            Repository r = i.next();
+            ImmutableRepository r = i.next();
             if (CollectionUtils.isEmpty(r.getGroupRepositories().keySet()))
             {
                 traverseResult.add(r);
@@ -60,8 +60,8 @@ public class GroupRepositorySetCollector
         return traverseResult;
     }
 
-    private Repository getRepository(Storage storage,
-                                     String id)
+    private ImmutableRepository getRepository(ImmutableStorage storage,
+                                              String id)
     {
         String sId = configurationManager.getStorageId(storage, id);
         String rId = configurationManager.getRepositoryId(id);

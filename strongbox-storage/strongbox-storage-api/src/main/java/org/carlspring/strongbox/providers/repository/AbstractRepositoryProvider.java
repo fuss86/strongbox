@@ -3,6 +3,7 @@ package org.carlspring.strongbox.providers.repository;
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.data.criteria.Expression.ExpOperator;
 import org.carlspring.strongbox.data.criteria.Paginator;
 import org.carlspring.strongbox.data.criteria.Predicate;
@@ -15,6 +16,7 @@ import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.services.ArtifactEntryService;
 import org.carlspring.strongbox.services.ArtifactTagService;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -97,7 +99,7 @@ public abstract class AbstractRepositoryProvider implements RepositoryProvider, 
         this.configurationManager = configurationManager;
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }
@@ -168,8 +170,8 @@ public abstract class AbstractRepositoryProvider implements RepositoryProvider, 
         {
             return;
         }
-        
-        Repository repository = repositoryPath.getRepository();
+
+        ImmutableRepository repository = repositoryPath.getRepository();
         String storageId = repository.getStorage().getId();
         String repositoryId = repository.getId();
 
@@ -203,7 +205,7 @@ public abstract class AbstractRepositoryProvider implements RepositoryProvider, 
             return;
         }
 
-        Repository repository = repositoryPath.getRepository();
+        ImmutableRepository repository = repositoryPath.getRepository();
         String storageId = repository.getStorage().getId();
         String repositoryId = repository.getId();
 
@@ -232,8 +234,8 @@ public abstract class AbstractRepositoryProvider implements RepositoryProvider, 
         {
             return;
         }
-        
-        Repository repository = repositoryPath.getRepository();
+
+        ImmutableRepository repository = repositoryPath.getRepository();
         String storageId = repository.getStorage().getId();
         String repositoryId = repository.getId();
 

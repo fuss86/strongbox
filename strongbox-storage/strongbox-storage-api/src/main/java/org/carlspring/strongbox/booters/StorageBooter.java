@@ -1,7 +1,7 @@
 package org.carlspring.strongbox.booters;
 
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
@@ -9,8 +9,8 @@ import org.carlspring.strongbox.providers.repository.group.GroupRepositorySetCol
 import org.carlspring.strongbox.repository.RepositoryManagementStrategyException;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 import org.carlspring.strongbox.services.RepositoryManagementService;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.RepositoryStatusEnum;
 
 import javax.annotation.PostConstruct;
@@ -72,11 +72,13 @@ public class StorageBooter
             createLockFile();
             createTempDir();
 
-            initializeStorages();
+            final ImmutableConfiguration configuration = configurationManager.getConfiguration();
 
-            Collection<Repository> repositories = getRepositoriesHierarchy();
+            initializeStorages(configuration.getStorages());
 
-            for (Repository repository : repositories)
+            Collection<ImmutableRepository> repositories = getRepositoriesHierarchy(configuration.getStorages());
+
+            for (ImmutableRepository repository : repositories)
             {
                 try
                 {
@@ -157,10 +159,7 @@ public class StorageBooter
         }
     }
 
-    /**
-     * @return The base directory for the storages
-     */
-    private Path initializeStorages()
+    private Path initializeStorages(final Map<String, ImmutableStorage> storages)
             throws IOException
     {
         logger.debug("Running Strongbox storage booter...");
@@ -177,8 +176,7 @@ public class StorageBooter
             basedir = ConfigurationResourceResolver.getVaultDirectory() + "/storages";
         }
 
-        final Map<String, Storage> storageEntry = configurationManager.getConfiguration().getStorages();
-        for (Map.Entry<String, Storage> stringStorageEntry : storageEntry.entrySet())
+        for (Map.Entry<String, ImmutableStorage> stringStorageEntry : storages.entrySet())
         {
             initializeStorage(stringStorageEntry.getValue());
         }
@@ -186,7 +184,7 @@ public class StorageBooter
         return Paths.get(basedir).toAbsolutePath();
     }
 
-    private Path initializeStorage(Storage storage)
+    private Path initializeStorage(ImmutableStorage storage)
             throws IOException
     {
         Path storagesBaseDir = Paths.get(storage.getBasedir());
@@ -198,7 +196,7 @@ public class StorageBooter
         return storagesBaseDir;
     }
 
-    private void initializeRepository(Repository repository)
+    private void initializeRepository(ImmutableRepository repository)
             throws IOException, RepositoryManagementStrategyException
     {
         logger.debug("  * Initializing '" + repository.getId() + "'...");
@@ -209,7 +207,7 @@ public class StorageBooter
                                        repository.getId()));
             return;
         }
-        
+
         final RepositoryPath repositoryBasedir = repositoryPathResolver.resolve(repository);
 
         logger.debug("  * Repository path resolved '" + repositoryBasedir.toAbsolutePath().toString() + "'...");
@@ -222,13 +220,12 @@ public class StorageBooter
         }
     }
 
-    private Collection<Repository> getRepositoriesHierarchy()
+    private Collection<ImmutableRepository> getRepositoriesHierarchy(final Map<String, ImmutableStorage> storages)
     {
-        final Map<String, Repository> repositoriesHierarchy = new LinkedHashMap<>();
-        final Configuration configuration = configurationManager.getConfiguration();
-        for (final Storage storage : configuration.getStorages().values())
+        final Map<String, ImmutableRepository> repositoriesHierarchy = new LinkedHashMap<>();
+        for (final ImmutableStorage storage : storages.values())
         {
-            for (final Repository repository : storage.getRepositories().values())
+            for (final ImmutableRepository repository : storage.getRepositories().values())
             {
                 addRepositoriesByChildrenFirst(repositoriesHierarchy, repository);
             }
@@ -236,8 +233,8 @@ public class StorageBooter
         return repositoriesHierarchy.values();
     }
 
-    private void addRepositoriesByChildrenFirst(final Map<String, Repository> repositoriesHierarchy,
-                                                final Repository repository)
+    private void addRepositoriesByChildrenFirst(final Map<String, ImmutableRepository> repositoriesHierarchy,
+                                                final ImmutableRepository repository)
     {
         if (!repository.isGroupRepository())
         {
@@ -257,11 +254,6 @@ public class StorageBooter
     public void setRepositoryManagementService(RepositoryManagementService repositoryManagementService)
     {
         this.repositoryManagementService = repositoryManagementService;
-    }
-
-    public Configuration getConfiguration()
-    {
-        return configurationManager.getConfiguration();
     }
 
 }

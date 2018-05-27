@@ -1,7 +1,7 @@
 package org.carlspring.strongbox.services.impl;
 
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.event.Event;
 import org.carlspring.strongbox.event.RepositoryBasedEvent;
 import org.carlspring.strongbox.event.repository.RepositoryEvent;
@@ -14,11 +14,11 @@ import org.carlspring.strongbox.providers.io.RootRepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategyException;
+import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.services.RepositoryManagementService;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
-import org.carlspring.strongbox.storage.repository.RepositoryStatusEnum;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.validation.resource.ArtifactOperationsValidator;
 
 import javax.inject.Inject;
@@ -41,6 +41,9 @@ public class RepositoryManagementServiceImpl
 
     @Inject
     private ConfigurationManager configurationManager;
+
+    @Inject
+    private ConfigurationManagementService configurationManagementService;
 
     @Inject
     private LayoutProviderRegistry layoutProviderRegistry;
@@ -67,7 +70,7 @@ public class RepositoryManagementServiceImpl
         }
         else
         {
-            Repository repository = getConfiguration().getStorage(storageId).getRepository(repositoryId);
+            ImmutableRepository repository = getConfiguration().getStorage(storageId).getRepository(repositoryId);
 
             logger.warn("Layout provider '" + repository.getLayout() + "' could not be resolved. " +
                         "Using generic implementation instead.");
@@ -111,8 +114,8 @@ public class RepositoryManagementServiceImpl
 
         try
         {
-            final Storage storage = getStorage(storageId);
-            final Repository repository = storage.getRepository(repositoryId);
+            final ImmutableStorage storage = getStorage(storageId);
+            final ImmutableRepository repository = storage.getRepository(repositoryId);
 
             artifactOperationsValidator.checkAllowsDeletion(repository);
 
@@ -156,8 +159,8 @@ public class RepositoryManagementServiceImpl
     {
         artifactOperationsValidator.validate(repositoryPath);
 
-        final Repository repository = repositoryPath.getRepository();
-        final Storage storage = repository.getStorage();
+        final ImmutableRepository repository = repositoryPath.getRepository();
+        final ImmutableStorage storage = repository.getStorage();
 
         artifactOperationsValidator.checkAllowsDeletion(repository);
 
@@ -186,8 +189,8 @@ public class RepositoryManagementServiceImpl
 
         try
         {
-            final Storage storage = getStorage(storageId);
-            final Repository repository = storage.getRepository(repositoryId);
+            final ImmutableStorage storage = getStorage(storageId);
+            final ImmutableRepository repository = storage.getRepository(repositoryId);
 
             if (repository.isTrashEnabled())
             {
@@ -225,49 +228,32 @@ public class RepositoryManagementServiceImpl
     public void putInService(String storageId,
                              String repositoryId)
     {
-        getConfiguration().getStorage(storageId)
-                          .getRepository(repositoryId)
-                          .setStatus(RepositoryStatusEnum.IN_SERVICE.getStatus());
-
-        RepositoryEvent event = new RepositoryEvent(storageId,
-                                                    repositoryId,
-                                                    RepositoryEventTypeEnum.EVENT_REPOSITORY_PUT_IN_SERVICE.getType());
-
-        repositoryEventListenerRegistry.dispatchEvent(event);
+        configurationManagementService.putInService(storageId, repositoryId);
     }
 
     @Override
     public void putOutOfService(String storageId,
                                 String repositoryId)
     {
-        getConfiguration().getStorage(storageId)
-                          .getRepository(repositoryId)
-                          .setStatus(RepositoryStatusEnum.OUT_OF_SERVICE.getStatus());
-
-        RepositoryEvent event = new RepositoryEvent(storageId,
-                                                    repositoryId,
-                                                    RepositoryEventTypeEnum.EVENT_REPOSITORY_PUT_OUT_OF_SERVICE
-                                                                           .getType());
-
-        repositoryEventListenerRegistry.dispatchEvent(event);
+        configurationManagementService.putOutOfService(storageId, repositoryId);
     }
 
     private LayoutProvider getLayoutProvider(String storageId,
                                              String repositoryId)
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         return layoutProviderRegistry.getProvider(repository.getLayout());
     }
 
     @Override
-    public Storage getStorage(String storageId)
+    public ImmutableStorage getStorage(String storageId)
     {
         return getConfiguration().getStorages().get(storageId);
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

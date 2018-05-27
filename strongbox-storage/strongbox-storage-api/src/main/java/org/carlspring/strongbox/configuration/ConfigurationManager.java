@@ -1,8 +1,8 @@
 package org.carlspring.strongbox.configuration;
 
 import org.carlspring.strongbox.services.ConfigurationManagementService;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 
 import javax.inject.Inject;
 import java.net.URI;
@@ -19,7 +19,7 @@ public class ConfigurationManager
     @Inject
     private ConfigurationManagementService configurationService;
 
-    public Repository getRepository(String storageAndRepositoryId)
+    public ImmutableRepository getRepository(String storageAndRepositoryId)
     {
         String[] elements = storageAndRepositoryId.split(":");
         String storageId = elements[0];
@@ -28,13 +28,13 @@ public class ConfigurationManager
         return getConfiguration().getStorage(storageId).getRepository(repositoryId);
     }
 
-    public Repository getRepository(String storageId,
-                                    String repositoryId)
+    public ImmutableRepository getRepository(String storageId,
+                                             String repositoryId)
     {
         return getConfiguration().getStorage(storageId).getRepository(repositoryId);
     }
 
-    public String getStorageId(Storage storage,
+    public String getStorageId(ImmutableStorage storage,
                                String storageAndRepositoryId)
     {
         String[] storageAndRepositoryIdTokens = storageAndRepositoryId.split(":");
@@ -49,9 +49,9 @@ public class ConfigurationManager
         return storageAndRepositoryIdTokens[storageAndRepositoryIdTokens.length < 2 ? 0 : 1];
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
-        return configurationService.getConfiguration();
+        return new ImmutableConfiguration(configurationService.getConfiguration());
     }
 
     public URI getBaseUri()

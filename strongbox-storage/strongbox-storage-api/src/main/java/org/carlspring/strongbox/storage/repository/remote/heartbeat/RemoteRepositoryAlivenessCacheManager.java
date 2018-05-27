@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.storage.repository.remote.heartbeat;
 
-import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 
 import javax.inject.Inject;
 import java.util.Objects;
@@ -28,12 +28,12 @@ public class RemoteRepositoryAlivenessCacheManager
         Objects.requireNonNull(cache, "remoteRepositoryAliveness cache configuration was not provided");
     }
 
-    public boolean isAlive(RemoteRepository remoteRepository)
+    public boolean isAlive(ImmutableRemoteRepository remoteRepository)
     {
         return BooleanUtils.isNotFalse(cache.get(remoteRepository.getUrl(), Boolean.class));
     }
 
-    public void put(RemoteRepository remoteRepository,
+    public void put(ImmutableRemoteRepository remoteRepository,
                     boolean aliveness)
     {
         cache.put(remoteRepository.getUrl(), Boolean.valueOf(aliveness));

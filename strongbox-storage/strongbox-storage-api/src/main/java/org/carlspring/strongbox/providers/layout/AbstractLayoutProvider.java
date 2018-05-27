@@ -1,23 +1,8 @@
 package org.carlspring.strongbox.providers.layout;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.spi.FileSystemProvider;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
-import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.event.artifact.ArtifactEventListenerRegistry;
 import org.carlspring.strongbox.event.repository.RepositoryEventListenerRegistry;
 import org.carlspring.strongbox.io.ArtifactInputStream;
@@ -32,8 +17,25 @@ import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathHandler;
 import org.carlspring.strongbox.providers.io.RootRepositoryPath;
 import org.carlspring.strongbox.providers.search.SearchException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,25 +96,25 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
         this.configurationManager = configurationManager;
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }
 
-    public Storage getStorage(String storageId)
+    public ImmutableStorage getStorage(String storageId)
     {
         return configurationManager.getConfiguration().getStorage(storageId);
     }
 
-    protected StorageProvider getStorageProvider(Repository repository)
+    protected StorageProvider getStorageProvider(ImmutableRepository repository)
     {
         return storageProviderRegistry.getProvider(repository.getImplementation());
     }
 
-    protected Repository getRepository(String storageId,
-                                       String repositoryId)
+    protected ImmutableRepository getRepository(String storageId,
+                                                String repositoryId)
     {
-        Storage storage = getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
 
         logger.debug("Checking in " + storage.getId() + ":" + repositoryId + "...");
 
@@ -138,14 +140,14 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     }
     
     @Override
-    public RepositoryPath resolve(Repository repository,
+    public RepositoryPath resolve(ImmutableRepository repository,
                                   URI resource)
     {
         return resolve(repository).resolve(resource.toString());
     }
 
     @Override
-    public RepositoryPath resolve(Repository repository,
+    public RepositoryPath resolve(ImmutableRepository repository,
                                   ArtifactCoordinates coordinates)
     {
         RepositoryFileSystem repositoryFileSystem = getRepositoryFileSystem(repository);
@@ -154,14 +156,14 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     }
 
     @Override
-    public RootRepositoryPath resolve(Repository repository)
+    public RootRepositoryPath resolve(ImmutableRepository repository)
     {
         RepositoryFileSystem repositoryFileSystem = getRepositoryFileSystem(repository);
         
         return repositoryFileSystem.getRootDirectory();
     }
     
-    public RepositoryFileSystem getRepositoryFileSystem(Repository repository)
+    public RepositoryFileSystem getRepositoryFileSystem(ImmutableRepository repository)
     {
         FileSystem storageFileSystem = getStorageProvider(repository).getFileSystem();
         RepositoryFileSystem repositoryFileSystem = new RepositoryLayoutFileSystem(repository,
@@ -171,7 +173,7 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
         return repositoryFileSystem;
     }
 
-    public RepositoryFileSystemProvider getProvider(Repository repository)
+    public RepositoryFileSystemProvider getProvider(ImmutableRepository repository)
     {
         FileSystemProvider storageFileSystemProvider = getStorageProvider(repository).getFileSystemProvider();
         RepositoryLayoutFileSystemProvider repositoryFileSystemProvider = new RepositoryLayoutFileSystemProvider(
@@ -233,8 +235,8 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
                        boolean force)
             throws IOException, SearchException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         RepositoryPath repositoryPath = resolve(repository).resolve(path);
         delete(repositoryPath, force);
@@ -273,8 +275,8 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     {
         logger.debug("Emptying trash for " + storageId + ":" + repositoryId + "...");
 
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         RepositoryPath path = resolve(repository);
 
         getProvider(repository).deleteTrash(path);
@@ -321,8 +323,8 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
         logger.debug(String.format("Attempting to restore: path-[%s]; ",
                                    repositoryPath));
 
-        Repository repository = repositoryPath.getFileSystem().getRepository();
-        Storage storage = repository.getStorage();
+        ImmutableRepository repository = repositoryPath.getFileSystem().getRepository();
+        ImmutableStorage storage = repository.getStorage();
         RepositoryFileSystemProvider provider = getProvider(repository);
         
         provider.undelete(repositoryPath);
@@ -338,12 +340,12 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     {
         boolean trashUndeleted = false;
 
-        for (Map.Entry entry : getConfiguration().getStorages().entrySet())
+        for (Map.Entry<String, ImmutableStorage> entry : getConfiguration().getStorages().entrySet())
         {
-            Storage storage = (Storage) entry.getValue();
+            ImmutableStorage storage = entry.getValue();
 
-            final Map<String, Repository> repositories = storage.getRepositories();
-            for (Repository repository : repositories.values())
+            final Map<String, ImmutableRepository> repositories = storage.getRepositories();
+            for (ImmutableRepository repository : repositories.values())
             {
                 LayoutProvider provider = layoutProviderRegistry.getProvider(repository.getLayout());
                 undelete(provider.resolve(repository));
@@ -359,7 +361,7 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     }
 
     @Override
-    public boolean containsArtifact(Repository repository,
+    public boolean containsArtifact(ImmutableRepository repository,
                                     ArtifactCoordinates coordinates)
             throws IOException
     {
@@ -369,7 +371,7 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     }
 
     @Override
-    public boolean containsPath(Repository repository,
+    public boolean containsPath(ImmutableRepository repository,
                                 String path)
             throws IOException
     {
@@ -499,7 +501,7 @@ public abstract class AbstractLayoutProvider<T extends ArtifactCoordinates>
     public class RepositoryLayoutFileSystem extends RepositoryFileSystem
     {
 
-        public RepositoryLayoutFileSystem(Repository repository,
+        public RepositoryLayoutFileSystem(ImmutableRepository repository,
                                           FileSystem storageFileSystem,
                                           RepositoryFileSystemProvider provider)
         {

@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.storage.repository.remote.heartbeat;
 
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.monitor.RemoteRepositoryHeartbeatMonitorStrategy;
 
@@ -18,7 +19,7 @@ class RemoteRepositoryHeartbeatMonitor
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteRepositoryHeartbeatMonitor.class);
 
-    private final RemoteRepository remoteRepository;
+    private final ImmutableRemoteRepository remoteRepository;
 
     private final RemoteRepositoryAlivenessCacheManager remoteRepositoryCacheManager;
 
@@ -26,7 +27,7 @@ class RemoteRepositoryHeartbeatMonitor
 
     RemoteRepositoryHeartbeatMonitor(@Nonnull RemoteRepositoryAlivenessCacheManager remoteRepositoryCacheManager,
                                      @Nonnull RemoteRepositoryHeartbeatMonitorStrategy monitorStrategy,
-                                     @Nonnull RemoteRepository remoteRepository)
+                                     @Nonnull ImmutableRemoteRepository remoteRepository)
     {
         Objects.requireNonNull(remoteRepositoryCacheManager);
         Objects.requireNonNull(monitorStrategy);

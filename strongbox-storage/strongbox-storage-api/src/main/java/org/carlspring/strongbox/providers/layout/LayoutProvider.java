@@ -10,7 +10,7 @@ import org.carlspring.strongbox.providers.io.RootRepositoryPath;
 import org.carlspring.strongbox.providers.search.SearchException;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategy;
 import org.carlspring.strongbox.services.ArtifactManagementService;
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 
 import java.io.IOException;
 import java.net.URI;
@@ -35,22 +35,22 @@ public interface LayoutProvider<T extends ArtifactCoordinates>
 
     ArtifactOutputStream getOutputStream(RepositoryPath path) throws IOException;
     
-    RepositoryPath resolve(Repository repository,
+    RepositoryPath resolve(ImmutableRepository repository,
                            URI resource);
     
-    RepositoryPath resolve(Repository repository,
+    RepositoryPath resolve(ImmutableRepository repository,
                            ArtifactCoordinates coordinates);
 
-    RootRepositoryPath resolve(Repository repository);
+    RootRepositoryPath resolve(ImmutableRepository repository);
 
-    RepositoryFileSystem getRepositoryFileSystem(Repository repository);
+    RepositoryFileSystem getRepositoryFileSystem(ImmutableRepository repository);
     
-    RepositoryFileSystemProvider getProvider(Repository repository);
+    RepositoryFileSystemProvider getProvider(ImmutableRepository repository);
     
-    boolean containsArtifact(Repository repository, ArtifactCoordinates coordinates)
+    boolean containsArtifact(ImmutableRepository repository, ArtifactCoordinates coordinates)
             throws IOException;
 
-    boolean containsPath(Repository repository, String path)
+    boolean containsPath(ImmutableRepository repository, String path)
             throws IOException;
 
     void copy(String srcStorageId,

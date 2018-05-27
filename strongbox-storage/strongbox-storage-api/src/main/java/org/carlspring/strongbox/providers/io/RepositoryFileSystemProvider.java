@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.providers.io;
 
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -276,7 +276,7 @@ public abstract class RepositoryFileSystemProvider
                                 boolean force)
             throws IOException
     {
-        Repository repository = repositoryPath.getFileSystem().getRepository();
+        ImmutableRepository repository = repositoryPath.getFileSystem().getRepository();
         if (!repository.isTrashEnabled())
         {
             Files.deleteIfExists(repositoryPath.getTarget());
@@ -290,7 +290,7 @@ public abstract class RepositoryFileSystemProvider
                    trashPath.getTarget(),
                    StandardCopyOption.REPLACE_EXISTING);
         
-        if (force && repository.allowsForceDeletion())
+        if (force && repository.isAllowsDelete())
         {
             deleteTrash(repositoryPath);
         }
@@ -299,7 +299,7 @@ public abstract class RepositoryFileSystemProvider
     public void undelete(RepositoryPath path)
             throws IOException
     {
-        Repository repository = path.getFileSystem().getRepository();
+        ImmutableRepository repository = path.getFileSystem().getRepository();
         if (!repository.isTrashEnabled())
         {
             return;
@@ -351,7 +351,7 @@ public abstract class RepositoryFileSystemProvider
     public void deleteTrash(RepositoryPath path)
             throws IOException
     {
-        Repository repository = path.getFileSystem().getRepository();
+        ImmutableRepository repository = path.getFileSystem().getRepository();
         if (!repository.isTrashEnabled())
         {
             return;

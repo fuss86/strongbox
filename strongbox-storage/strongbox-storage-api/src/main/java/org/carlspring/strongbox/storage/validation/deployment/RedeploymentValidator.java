@@ -3,6 +3,7 @@ package org.carlspring.strongbox.storage.validation.deployment;
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidatorRegistry;
 import org.carlspring.strongbox.storage.validation.artifact.version.VersionValidationException;
@@ -58,7 +59,7 @@ public class RedeploymentValidator
     }
 
     @Override
-    public void validate(Repository repository,
+    public void validate(ImmutableRepository repository,
                          ArtifactCoordinates coordinates)
             throws VersionValidationException,
                    IOException
@@ -66,7 +67,7 @@ public class RedeploymentValidator
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
 
         if (repository.acceptsReleases() &&
-            (!repository.allowsRedeployment() && layoutProvider.containsArtifact(repository, coordinates)))
+            (!repository.isAllowsDeployment() && layoutProvider.containsArtifact(repository, coordinates)))
         {
             throw new VersionValidationException("The " + repository.getStorage().getId() + ":" +
                                                  repository.toString() +

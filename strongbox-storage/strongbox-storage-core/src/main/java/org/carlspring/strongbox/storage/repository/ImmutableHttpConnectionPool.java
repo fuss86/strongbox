@@ -6,16 +6,16 @@ package org.carlspring.strongbox.storage.repository;
 public class ImmutableHttpConnectionPool
 {
 
-    private final HttpConnectionPool delegate;
+    private final int allocatedConnections;
 
 
     public ImmutableHttpConnectionPool(final HttpConnectionPool delegate)
     {
-        this.delegate = delegate;
+        allocatedConnections = delegate.getAllocatedConnections();
     }
 
     public int getAllocatedConnections()
     {
-        return delegate.getAllocatedConnections();
+        return allocatedConnections;
     }
 }

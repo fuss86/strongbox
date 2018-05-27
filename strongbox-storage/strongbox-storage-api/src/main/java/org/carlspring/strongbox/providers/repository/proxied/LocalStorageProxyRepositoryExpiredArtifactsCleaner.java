@@ -10,9 +10,9 @@ import org.carlspring.strongbox.providers.search.SearchException;
 import org.carlspring.strongbox.services.ArtifactEntryService;
 import org.carlspring.strongbox.services.ArtifactManagementService;
 import org.carlspring.strongbox.services.support.ArtifactEntrySearchCriteria;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
-import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoryAlivenessCacheManager;
 
 import javax.inject.Inject;
@@ -47,7 +47,7 @@ public class LocalStorageProxyRepositoryExpiredArtifactsCleaner
 
     @Inject
     private RemoteRepositoryAlivenessCacheManager remoteRepositoryAlivenessCacheManager;
-    
+
     @Inject
     private ArtifactManagementService artifactManagementService;
 
@@ -84,14 +84,15 @@ public class LocalStorageProxyRepositoryExpiredArtifactsCleaner
         for (final Iterator<ArtifactEntry> it = artifactEntries.iterator(); it.hasNext(); )
         {
             final ArtifactEntry artifactEntry = it.next();
-            final Storage storage = configurationManager.getConfiguration().getStorage(artifactEntry.getStorageId());
-            final Repository repository = storage.getRepository(artifactEntry.getRepositoryId());
+            final ImmutableStorage storage = configurationManager.getConfiguration().getStorage(
+                    artifactEntry.getStorageId());
+            final ImmutableRepository repository = storage.getRepository(artifactEntry.getRepositoryId());
             if (!repository.isProxyRepository())
             {
                 it.remove();
                 continue;
             }
-            final RemoteRepository remoteRepository = repository.getRemoteRepository();
+            final ImmutableRemoteRepository remoteRepository = repository.getRemoteRepository();
             if (remoteRepository == null)
             {
                 logger.warn("Repository {} is not associated with remote repository", repository.getId());
@@ -113,11 +114,12 @@ public class LocalStorageProxyRepositoryExpiredArtifactsCleaner
     {
         for (final ArtifactEntry artifactEntry : artifactEntries)
         {
-            final Storage storage = configurationManager.getConfiguration().getStorage(artifactEntry.getStorageId());
-            final Repository repository = storage.getRepository(artifactEntry.getRepositoryId());
+            final ImmutableStorage storage = configurationManager.getConfiguration().getStorage(
+                    artifactEntry.getStorageId());
+            final ImmutableRepository repository = storage.getRepository(artifactEntry.getRepositoryId());
             final LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
             RepositoryPath repositoryPath = layoutProvider.resolve(repository).resolve(artifactEntry);
-            
+
             artifactManagementService.delete(repositoryPath, true);
         }
     }

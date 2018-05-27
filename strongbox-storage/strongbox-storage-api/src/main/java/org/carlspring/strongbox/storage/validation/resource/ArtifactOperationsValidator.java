@@ -1,16 +1,16 @@
 package org.carlspring.strongbox.storage.validation.resource;
 
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.storage.ArtifactResolutionException;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.RepositoryTypeEnum;
 
 import javax.inject.Inject;
@@ -43,8 +43,8 @@ public class ArtifactOperationsValidator
     {
         checkArtifactPath(repositoryPath);
         
-        Repository repository = repositoryPath.getRepository();
-        Storage storage = repository.getStorage();
+        ImmutableRepository repository = repositoryPath.getRepository();
+        ImmutableStorage storage = repository.getStorage();
         
         checkStorageExists(storage.getId());
         checkRepositoryExists(storage.getId(), repository.getId());
@@ -89,10 +89,10 @@ public class ArtifactOperationsValidator
         }
     }
 
-    public void checkAllowsDeployment(Repository repository)
+    public void checkAllowsDeployment(ImmutableRepository repository)
             throws ArtifactStorageException
     {
-        if (!repository.allowsDeployment() ||
+        if (!repository.isAllowsDeployment() ||
             RepositoryTypeEnum.GROUP.getType().equals(repository.getType()) ||
             RepositoryTypeEnum.PROXY.getType().equals(repository.getType()))
         {
@@ -111,13 +111,13 @@ public class ArtifactOperationsValidator
         }
     }
 
-    public void checkAllowsRedeployment(Repository repository,
+    public void checkAllowsRedeployment(ImmutableRepository repository,
                                         ArtifactCoordinates coordinates)
             throws IOException,
                    ProviderImplementationException
     {
         LayoutProvider layoutProvider = getLayoutProvider(repository, layoutProviderRegistry);
-        if (layoutProvider.containsArtifact(repository, coordinates) && !repository.allowsDeployment())
+        if (layoutProvider.containsArtifact(repository, coordinates) && !repository.isAllowsDeployment())
         {
             throw new ArtifactStorageException("Re-deployment of artifacts to " +
                                                repository.getStorage().getId() + ":" + repository.getId() +
@@ -125,10 +125,10 @@ public class ArtifactOperationsValidator
         }
     }
 
-    public void checkAllowsDeletion(Repository repository)
+    public void checkAllowsDeletion(ImmutableRepository repository)
             throws ArtifactStorageException
     {
-        if (!repository.allowsDeletion())
+        if (!repository.isAllowsDelete())
         {
             throw new ArtifactStorageException("Deleting artifacts from " + repository.getType() +
                                                " repository is not allowed!");
@@ -145,8 +145,7 @@ public class ArtifactOperationsValidator
             throw new ArtifactResolutionException("Uploaded file is empty.");
         }
 
-        Repository repository = getConfiguration().getStorage(storageId)
-                                                  .getRepository(repositoryId);
+        ImmutableRepository repository = getConfiguration().getStorage(storageId).getRepository(repositoryId);
         long artifactMaxSize = repository.getArtifactMaxSize();
 
         if (artifactMaxSize > 0 && uploadedFile.getSize() > artifactMaxSize)
@@ -157,7 +156,7 @@ public class ArtifactOperationsValidator
         }
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

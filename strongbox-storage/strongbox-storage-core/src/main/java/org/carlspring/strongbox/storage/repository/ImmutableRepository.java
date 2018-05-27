@@ -23,200 +23,272 @@ import com.google.common.collect.ImmutableMap;
 public class ImmutableRepository
 {
 
-    private final Repository delegate;
+    private final String id;
 
+    private final String basedir;
+
+    private final String policy;
+
+    private final String implementation;
+
+    private final String layout;
+
+    private final String type;
+
+    private final boolean secured;
+
+    private final String status;
+
+    private final long artifactMaxSize;
+
+    private final boolean trashEnabled;
+
+    private final boolean allowsForceDeletion;
+
+    private final boolean allowsDeployment;
+
+    private final boolean allowsRedeployment;
+
+    private final boolean allowsDelete;
+
+    private final boolean allowsDirectoryBrowsing;
+
+    private final boolean checksumHeadersEnabled;
+
+    private final ImmutableProxyConfiguration proxyConfiguration;
+
+    private final ImmutableRemoteRepository remoteRepository;
+
+    private final ImmutableHttpConnectionPool httpConnectionPool;
+
+    private final List<ImmutableCustomConfiguration> customConfigurations;
+
+    private final ImmutableCustomRepositoryConfiguration repositoryConfiguration;
+
+    private final Map<String, String> groupRepositories;
+
+    private final Map<String, String> artifactCoordinateValidators;
+
+    private final ImmutableStorage storage;
 
     public ImmutableRepository(final Repository delegate)
     {
-        this.delegate = delegate;
+        this.id = delegate.getId();
+        this.basedir = delegate.getBasedir();
+        this.policy = delegate.getPolicy();
+        this.implementation = delegate.getImplementation();
+        this.layout = delegate.getLayout();
+        this.type = delegate.getType();
+        this.secured = delegate.isSecured();
+        this.status = delegate.getStatus();
+        this.artifactMaxSize = delegate.getArtifactMaxSize();
+        this.trashEnabled = delegate.isTrashEnabled();
+        this.allowsForceDeletion = delegate.isAllowsForceDeletion();
+        this.allowsDeployment = delegate.isAllowsDeployment();
+        this.allowsRedeployment = delegate.isAllowsRedeployment();
+        this.allowsDelete = delegate.isAllowsDelete();
+        this.allowsDirectoryBrowsing = delegate.isAllowsDirectoryBrowsing();
+        this.checksumHeadersEnabled = delegate.isChecksumHeadersEnabled();
+        this.proxyConfiguration = immuteProxyConfiguration(delegate.getProxyConfiguration());
+        this.remoteRepository = immuteRemoteRepository(delegate.getRemoteRepository());
+        this.httpConnectionPool = immuteHttpConnectionPool(delegate.getHttpConnectionPool());
+        this.customConfigurations = immuteCustomConfigurations(delegate.getCustomConfigurations());
+        this.repositoryConfiguration = immuteCustomRepositoryConfiguration(delegate.getRepositoryConfiguration());
+        this.groupRepositories = immuteGroupRepositories(delegate.getGroupRepositories());
+        this.artifactCoordinateValidators = immuteArtifactCoordinateValidators(
+                delegate.getArtifactCoordinateValidators());
+        this.storage = immuteStorage(delegate.getStorage());
     }
 
-    public String getId()
+    private ImmutableProxyConfiguration immuteProxyConfiguration(final ProxyConfiguration source)
     {
-        return delegate.getId();
-    }
-
-    public String getBasedir()
-    {
-        return delegate.getBasedir();
-    }
-
-    public String getPolicy()
-    {
-        return delegate.getPolicy();
-    }
-
-    public String getImplementation()
-    {
-        return delegate.getImplementation();
-    }
-
-    public String getLayout()
-    {
-        return delegate.getLayout();
-    }
-
-    public String getType()
-    {
-        return delegate.getType();
-    }
-
-    public boolean isSecured()
-    {
-        return delegate.isSecured();
-    }
-
-    public String getStatus()
-    {
-        return delegate.getStatus();
-    }
-
-    public boolean isInService()
-    {
-        return delegate.isInService();
-    }
-
-    public boolean isTrashEnabled()
-    {
-        return delegate.isTrashEnabled();
-    }
-
-    public boolean allowsDeletion()
-    {
-        return delegate.allowsDeletion();
-    }
-
-    public boolean allowsForceDeletion()
-    {
-        return delegate.allowsForceDeletion();
-    }
-
-    public boolean allowsDeployment()
-    {
-        return delegate.allowsDeployment();
-    }
-
-    public boolean allowsRedeployment()
-    {
-        return delegate.allowsRedeployment();
-    }
-
-    public boolean allowsDirectoryBrowsing()
-    {
-        return delegate.allowsDirectoryBrowsing();
-    }
-
-    public boolean isChecksumHeadersEnabled()
-    {
-        return delegate.isChecksumHeadersEnabled();
-    }
-
-    public ImmutableProxyConfiguration getProxyConfiguration()
-    {
-        final ProxyConfiguration source = delegate.getProxyConfiguration();
         return source != null ? new ImmutableProxyConfiguration(source) : null;
     }
 
-    public ImmutableRemoteRepository getRemoteRepository()
+    private ImmutableRemoteRepository immuteRemoteRepository(final RemoteRepository source)
     {
-        final RemoteRepository source = delegate.getRemoteRepository();
         return source != null ? new ImmutableRemoteRepository(source) : null;
     }
 
-    public Map<String, String> getGroupRepositories()
+    private Map<String, String> immuteGroupRepositories(final Map<String, String> source)
     {
-        final Map<String, String> source = delegate.getGroupRepositories();
         return source != null ? ImmutableMap.copyOf(source) : Collections.emptyMap();
     }
 
-    public boolean acceptsSnapshots()
+    private ImmutableStorage immuteStorage(final Storage source)
     {
-        return delegate.acceptsSnapshots();
-    }
-
-    public boolean acceptsReleases()
-    {
-        return delegate.acceptsReleases();
-    }
-
-    public ImmutableStorage getStorage()
-    {
-        final Storage source = delegate.getStorage();
         return source != null ? new ImmutableStorage(source) : null;
     }
 
-    public ImmutableHttpConnectionPool getHttpConnectionPool()
+    private ImmutableHttpConnectionPool immuteHttpConnectionPool(final HttpConnectionPool source)
     {
-        final HttpConnectionPool source = delegate.getHttpConnectionPool();
         return source != null ? new ImmutableHttpConnectionPool(source) : null;
     }
 
-    public List<ImmutableCustomConfiguration> getCustomConfigurations()
+    private List<ImmutableCustomConfiguration> immuteCustomConfigurations(final List<CustomConfiguration> source)
     {
-        final List<CustomConfiguration> source = delegate.getCustomConfigurations();
         return source != null ? ImmutableList.copyOf(source.stream().map(CustomConfiguration::getImmutable).collect(
                 Collectors.toList())) : Collections.emptyList();
     }
 
-    public ImmutableCustomRepositoryConfiguration getRepositoryConfiguration()
+    private ImmutableCustomRepositoryConfiguration immuteCustomRepositoryConfiguration(final CustomRepositoryConfiguration source)
     {
-        final CustomRepositoryConfiguration source = delegate.getRepositoryConfiguration();
         return source != null ? source.getImmutable() : null;
     }
 
-    public boolean isAllowsForceDeletion()
+
+    private Map<String, String> immuteArtifactCoordinateValidators(final Map<String, String> source)
     {
-        return delegate.isAllowsForceDeletion();
+        return source != null ? ImmutableMap.copyOf(source) : Collections.emptyMap();
     }
 
-    public boolean isAllowsDeployment()
+    public String getId()
     {
-        return delegate.isAllowsDeployment();
+        return id;
     }
 
-    public boolean isAllowsRedeployment()
+    public String getBasedir()
     {
-        return delegate.isAllowsRedeployment();
+        return basedir;
     }
 
-    public boolean isAllowsDelete()
+    public String getPolicy()
     {
-        return delegate.isAllowsDelete();
+        return policy;
     }
 
-    public boolean isAllowsDirectoryBrowsing()
+    public String getImplementation()
     {
-        return delegate.isAllowsDirectoryBrowsing();
+        return implementation;
     }
 
-    public boolean isHostedRepository()
+    public String getLayout()
     {
-        return delegate.isHostedRepository();
+        return layout;
     }
 
-    public boolean isProxyRepository()
+    public String getType()
     {
-        return delegate.isProxyRepository();
+        return type;
     }
 
-    public boolean isGroupRepository()
+    public boolean isSecured()
     {
-        return delegate.isGroupRepository();
+        return secured;
     }
 
-    public boolean isVirtualRepository()
+    public String getStatus()
     {
-        return delegate.isVirtualRepository();
+        return status;
     }
 
     public long getArtifactMaxSize()
     {
-        return delegate.getArtifactMaxSize();
+        return artifactMaxSize;
+    }
+
+    public boolean isTrashEnabled()
+    {
+        return trashEnabled;
+    }
+
+    public boolean isAllowsForceDeletion()
+    {
+        return allowsForceDeletion;
+    }
+
+    public boolean isAllowsDeployment()
+    {
+        return allowsDeployment;
+    }
+
+    public boolean isAllowsRedeployment()
+    {
+        return allowsRedeployment;
+    }
+
+    public boolean isAllowsDelete()
+    {
+        return allowsDelete;
+    }
+
+    public boolean isAllowsDirectoryBrowsing()
+    {
+        return allowsDirectoryBrowsing;
+    }
+
+    public boolean isChecksumHeadersEnabled()
+    {
+        return checksumHeadersEnabled;
+    }
+
+    public ImmutableProxyConfiguration getProxyConfiguration()
+    {
+        return proxyConfiguration;
+    }
+
+    public ImmutableRemoteRepository getRemoteRepository()
+    {
+        return remoteRepository;
+    }
+
+    public ImmutableHttpConnectionPool getHttpConnectionPool()
+    {
+        return httpConnectionPool;
+    }
+
+    public List<ImmutableCustomConfiguration> getCustomConfigurations()
+    {
+        return customConfigurations;
+    }
+
+    public ImmutableCustomRepositoryConfiguration getRepositoryConfiguration()
+    {
+        return repositoryConfiguration;
+    }
+
+    public Map<String, String> getGroupRepositories()
+    {
+        return groupRepositories;
     }
 
     public Map<String, String> getArtifactCoordinateValidators()
     {
-        final Map<String, String> source = delegate.getArtifactCoordinateValidators();
-        return source != null ? ImmutableMap.copyOf(source) : Collections.emptyMap();
+        return artifactCoordinateValidators;
+    }
+
+    public ImmutableStorage getStorage()
+    {
+        return storage;
+    }
+
+    public boolean isHostedRepository()
+    {
+        return RepositoryTypeEnum.HOSTED.getType().equals(type);
+    }
+
+    public boolean isProxyRepository()
+    {
+        return RepositoryTypeEnum.PROXY.getType().equals(type);
+    }
+
+    public boolean isGroupRepository()
+    {
+        return RepositoryTypeEnum.GROUP.getType().equals(type);
+    }
+
+    public boolean isInService()
+    {
+        return RepositoryStatusEnum.IN_SERVICE.getStatus().equalsIgnoreCase(getStatus());
+    }
+
+    public boolean acceptsSnapshots()
+    {
+        return RepositoryPolicyEnum.ofPolicy(getPolicy()).acceptsSnapshots();
+    }
+
+    public boolean acceptsReleases()
+    {
+        return RepositoryPolicyEnum.ofPolicy(getPolicy()).acceptsReleases();
     }
 }

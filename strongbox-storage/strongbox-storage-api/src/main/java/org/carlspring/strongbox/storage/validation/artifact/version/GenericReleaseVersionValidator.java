@@ -1,6 +1,7 @@
 package org.carlspring.strongbox.storage.validation.artifact.version;
 
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.ArtifactCoordinatesValidator;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidatorRegistry;
@@ -55,7 +56,7 @@ public class GenericReleaseVersionValidator
     }
 
     @Override
-    public boolean supports(Repository repository)
+    public boolean supports(ImmutableRepository repository)
     {
         return repository.getArtifactCoordinateValidators().keySet().contains(ALIAS);
     }
@@ -67,7 +68,7 @@ public class GenericReleaseVersionValidator
     }
 
     @Override
-    public void validate(Repository repository,
+    public void validate(ImmutableRepository repository,
                          ArtifactCoordinates coordinates)
             throws VersionValidationException
     {

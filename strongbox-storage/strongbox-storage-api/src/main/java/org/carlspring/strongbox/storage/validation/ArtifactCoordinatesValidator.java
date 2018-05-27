@@ -2,6 +2,7 @@ package org.carlspring.strongbox.storage.validation;
 
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
 import org.carlspring.strongbox.providers.ProviderImplementationException;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidationException;
 import org.carlspring.strongbox.storage.validation.artifact.version.VersionValidationException;
@@ -22,7 +23,7 @@ public interface ArtifactCoordinatesValidator
 
     String getDescription();
 
-    default boolean supports(Repository repository)
+    default boolean supports(ImmutableRepository repository)
     {
         return true;
     }
@@ -38,7 +39,7 @@ public interface ArtifactCoordinatesValidator
      * @param repository  The repository.
      * @param coordinates The artifact being deployed.
      */
-    void validate(Repository repository,
+    void validate(ImmutableRepository repository,
                   ArtifactCoordinates coordinates)
             throws VersionValidationException,
                    ProviderImplementationException,

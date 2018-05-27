@@ -1,13 +1,13 @@
 package org.carlspring.strongbox.providers.search;
 
 import org.carlspring.strongbox.config.MavenIndexerEnabledCondition;
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
-import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.search.SearchRequest;
 import org.carlspring.strongbox.storage.search.SearchResult;
 import org.carlspring.strongbox.storage.search.SearchResults;
@@ -74,7 +74,7 @@ public class MavenIndexerSearchProvider
 
         try
         {
-            final Collection<Storage> storages = getConfiguration().getStorages().values();
+            final Collection<ImmutableStorage> storages = getConfiguration().getStorages().values();
             if (StringUtils.isNotBlank(repositoryId))
             {
                 logger.debug("Repository: {}", repositoryId);
@@ -82,7 +82,7 @@ public class MavenIndexerSearchProvider
                 final String storageId = searchRequest.getStorageId();
                 if (StringUtils.isBlank(storageId))
                 {
-                    for (Storage storage : storages)
+                    for (ImmutableStorage storage : storages)
                     {
                         if (storage.containsRepository(repositoryId))
                         {
@@ -98,9 +98,9 @@ public class MavenIndexerSearchProvider
             }
             else
             {
-                for (Storage storage : storages)
+                for (ImmutableStorage storage : storages)
                 {
-                    for (Repository r : storage.getRepositories().values())
+                    for (ImmutableRepository r : storage.getRepositories().values())
                     {
                         logger.debug("Repository: {}", r.getId());
 
@@ -152,7 +152,7 @@ public class MavenIndexerSearchProvider
         return !search(searchRequest).getResults().isEmpty();
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

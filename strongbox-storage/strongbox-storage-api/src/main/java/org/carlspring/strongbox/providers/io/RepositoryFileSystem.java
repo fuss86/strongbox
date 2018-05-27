@@ -5,6 +5,7 @@ import java.nio.file.PathMatcher;
 import java.util.Set;
 
 import org.carlspring.strongbox.io.FileSystemWrapper;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 /**
@@ -21,10 +22,10 @@ public abstract class RepositoryFileSystem
     public static final String TEMP = ".temp";
     public static final String INDEX = ".index";
     
-    private Repository repository;
+    private ImmutableRepository repository;
     private RepositoryFileSystemProvider fileSystemProvider;
 
-    public RepositoryFileSystem(Repository repository,
+    public RepositoryFileSystem(ImmutableRepository repository,
                                 FileSystem storageFileSystem,
                                 RepositoryFileSystemProvider provider)
     {
@@ -33,7 +34,7 @@ public abstract class RepositoryFileSystem
         this.fileSystemProvider = provider;
     }
 
-    public Repository getRepository()
+    public ImmutableRepository getRepository()
     {
         return repository;
     }

@@ -9,20 +9,23 @@ public class ImmutableAwsConfiguration
         extends ImmutableCustomConfiguration
 {
 
-    private final AwsConfiguration awsConfiguration;
+    private final String bucket;
 
-    public ImmutableAwsConfiguration(final AwsConfiguration awsConfiguration)
+    private final String key;
+
+    public ImmutableAwsConfiguration(final AwsConfiguration delegate)
     {
-        this.awsConfiguration = awsConfiguration;
+        this.bucket = delegate.getBucket();
+        this.key = delegate.getKey();
     }
 
     public String getBucket()
     {
-        return awsConfiguration.getBucket();
+        return bucket;
     }
 
     public String getKey()
     {
-        return awsConfiguration.getKey();
+        return key;
     }
 }

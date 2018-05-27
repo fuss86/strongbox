@@ -1,5 +1,19 @@
 package org.carlspring.strongbox.services.impl;
 
+import org.carlspring.strongbox.client.CloseableRestResponse;
+import org.carlspring.strongbox.client.RestArtifactResolver;
+import org.carlspring.strongbox.client.RestArtifactResolverFactory;
+import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableRemoteRepositoryRetryArtifactDownloadConfiguration;
+import org.carlspring.strongbox.providers.io.RepositoryFiles;
+import org.carlspring.strongbox.providers.io.RepositoryPath;
+import org.carlspring.strongbox.services.ArtifactByteStreamsCopyStrategy;
+import org.carlspring.strongbox.services.support.ArtifactByteStreamsCopyException;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
+import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoryAlivenessCacheManager;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,24 +21,10 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.carlspring.strongbox.client.CloseableRestResponse;
-import org.carlspring.strongbox.client.RestArtifactResolver;
-import org.carlspring.strongbox.client.RestArtifactResolverFactory;
-import org.carlspring.strongbox.configuration.ConfigurationManager;
-import org.carlspring.strongbox.configuration.RemoteRepositoryRetryArtifactDownloadConfiguration;
-import org.carlspring.strongbox.providers.io.RepositoryFiles;
-import org.carlspring.strongbox.providers.io.RepositoryPath;
-import org.carlspring.strongbox.services.ArtifactByteStreamsCopyStrategy;
-import org.carlspring.strongbox.services.support.ArtifactByteStreamsCopyException;
-import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
-import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoryAlivenessCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -138,7 +138,7 @@ public class ProxyRepositoryArtifactByteStreamsCopy
     {
         ArtifactCopyContext ctx = artifactCopyContext.get();
         
-        RemoteRepository remoteRepository = artifactPath.getFileSystem().getRepository().getRemoteRepository();
+        ImmutableRemoteRepository remoteRepository = artifactPath.getFileSystem().getRepository().getRemoteRepository();
         RestArtifactResolver client = ctx.getClient(remoteRepository);
         String resourcePath = getRestClientResourcePath(artifactPath);
         
@@ -167,7 +167,7 @@ public class ProxyRepositoryArtifactByteStreamsCopy
     {
         ArtifactCopyContext ctx = artifactCopyContext.get();
         
-        RemoteRepository remoteRepository = artifactPath.getFileSystem().getRepository().getRemoteRepository();
+        ImmutableRemoteRepository remoteRepository = artifactPath.getFileSystem().getRepository().getRemoteRepository();
         RestArtifactResolver client = ctx.getClient(remoteRepository);
         
         final String resourcePath = getRestClientResourcePath(artifactPath);
@@ -187,7 +187,7 @@ public class ProxyRepositoryArtifactByteStreamsCopy
     
     private boolean checkRemoteRepositoryHeartbeat(final RepositoryPath artifactPath)
     {
-        final RemoteRepository remoteRepository = artifactPath.getFileSystem().getRepository().getRemoteRepository();
+        final ImmutableRemoteRepository remoteRepository = artifactPath.getFileSystem().getRepository().getRemoteRepository();
         return remoteRepositoryAlivenessCacheManager.isAlive(remoteRepository);
     }
 
@@ -243,7 +243,7 @@ public class ProxyRepositoryArtifactByteStreamsCopy
         return finalArtifactPath;
     }
 
-    private RestArtifactResolver getRestArtifactResolver(final RemoteRepository remoteRepository)
+    private RestArtifactResolver getRestArtifactResolver(final ImmutableRemoteRepository remoteRepository)
     {
         return artifactResolverFactory.newInstance(remoteRepository.getUrl(), remoteRepository.getUsername(),
                                                    remoteRepository.getPassword());
@@ -264,7 +264,7 @@ public class ProxyRepositoryArtifactByteStreamsCopy
         return getRetryConfiguration().getMaxNumberOfAttempts();
     }
 
-    private RemoteRepositoryRetryArtifactDownloadConfiguration getRetryConfiguration()
+    private ImmutableRemoteRepositoryRetryArtifactDownloadConfiguration getRetryConfiguration()
     {
         return configurationManager.getConfiguration()
                                    .getRemoteRepositoriesConfiguration()
@@ -321,7 +321,7 @@ public class ProxyRepositoryArtifactByteStreamsCopy
             this.rangeRequestSupported = rangeRequestSupported;
         }
 
-        public RestArtifactResolver getClient(RemoteRepository repository)
+        public RestArtifactResolver getClient(ImmutableRemoteRepository repository)
         {
             return client = Optional.ofNullable(client).orElse(getRestArtifactResolver(repository));
         }
