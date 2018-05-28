@@ -8,6 +8,7 @@ import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.NugetRepositoryFeatures;
 import org.carlspring.strongbox.repository.NugetRepositoryManagementStrategy;
 import org.carlspring.strongbox.services.ArtifactManagementService;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.annotation.PostConstruct;
@@ -136,7 +137,7 @@ public class NugetLayoutProvider
     }
 
     @Override
-    public RepositoryFileSystemProvider getProvider(Repository repository)
+    public RepositoryFileSystemProvider getProvider(ImmutableRepository repository)
     {
         FileSystemProvider storageFileSystemProvider = getStorageProvider(repository).getFileSystemProvider();
         RepositoryLayoutFileSystemProvider repositoryFileSystemProvider = new NugetRepositoryLayoutFileSystemProvider(

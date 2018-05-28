@@ -17,11 +17,13 @@ import org.carlspring.strongbox.services.ArtifactResolutionService;
 import org.carlspring.strongbox.services.ArtifactSearchService;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.services.RepositoryManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
 import org.carlspring.strongbox.storage.metadata.MavenMetadataManager;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.MavenRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryPolicyEnum;
@@ -80,12 +82,6 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
 
     @Inject
     protected Optional<RepositoryIndexManager> repositoryIndexManager;
-
-    @Inject
-    protected ConfigurationManagementService configurationManagementService;
-
-    @Inject
-    protected ConfigurationManager configurationManager;
 
     @Inject
     protected RepositoryManagementService repositoryManagementService;
@@ -187,11 +183,11 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
         JAXBException,
         RepositoryManagementStrategyException
     {
-        Repository repository = mavenRepositoryFactory.createRepository(storageId, repositoryId);
+        Repository repository = mavenRepositoryFactory.createRepository(repositoryId);
         repository.setPolicy(policy);
         repository.setRepositoryConfiguration(repositoryConfiguration);
 
-        createRepository(repository);
+        createRepository(repository, storageId);
         
         return repository;
     }
@@ -210,11 +206,11 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
         RemoteRepository remoteRepository = new RemoteRepository();
         remoteRepository.setUrl(remoteRepositoryUrl);
 
-        Repository repository = mavenRepositoryFactory.createRepository(storageId, repositoryId);
+        Repository repository = mavenRepositoryFactory.createRepository(repositoryId);
         repository.setRemoteRepository(remoteRepository);
         repository.setRepositoryConfiguration(repositoryConfiguration);
 
-        createRepository(repository);
+        createRepository(repository, storageId);
     }
 
     private void generateArtifactsReIndexAndPack(String storageId,
@@ -231,9 +227,9 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
             generateArtifact(repositoryBaseDir, ga + ":" + version + ":jar");
         }
 
-        Repository repository = configurationManagementService.getConfiguration()
-                                                              .getStorage(storageId)
-                                                              .getRepository(repositoryId);
+        ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                       .getStorage(storageId)
+                                                                       .getRepository(repositoryId);
 
         if (!(features instanceof IndexedMavenRepositoryFeatures))
         {
@@ -253,9 +249,9 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
                         String repositoryId,
                         String path)
     {
-        Repository repository = configurationManagementService.getConfiguration()
-                                                              .getStorage(storageId)
-                                                              .getRepository(repositoryId);
+        ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                       .getStorage(storageId)
+                                                                       .getRepository(repositoryId);
 
         if (!(features instanceof IndexedMavenRepositoryFeatures))
         {
@@ -274,9 +270,9 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
                           String repositoryId)
             throws IOException
     {
-        Repository repository = configurationManagementService.getConfiguration()
-                                                              .getStorage(storageId)
-                                                              .getRepository(repositoryId);
+        ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                       .getStorage(storageId)
+                                                                       .getRepository(repositoryId);
 
         if (!(features instanceof IndexedMavenRepositoryFeatures))
         {
@@ -382,8 +378,8 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
                                          String repositoryId)
             throws IOException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         RepositoryPath repositoryPath = layoutProvider.resolve(repository);
 

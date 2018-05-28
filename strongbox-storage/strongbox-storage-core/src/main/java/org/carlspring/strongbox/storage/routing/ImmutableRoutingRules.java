@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.storage.routing;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableRoutingRules
 {
 

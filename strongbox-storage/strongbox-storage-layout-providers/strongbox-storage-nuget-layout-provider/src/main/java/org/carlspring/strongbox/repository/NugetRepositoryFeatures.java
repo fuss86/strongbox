@@ -3,8 +3,8 @@ package org.carlspring.strongbox.repository;
 import org.carlspring.strongbox.artifact.ArtifactTag;
 import org.carlspring.strongbox.artifact.coordinates.NugetArtifactCoordinates;
 import org.carlspring.strongbox.client.ArtifactTransportException;
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.data.criteria.Expression.ExpOperator;
 import org.carlspring.strongbox.data.criteria.OQueryTemplate;
 import org.carlspring.strongbox.data.criteria.Paginator;
@@ -22,13 +22,13 @@ import org.carlspring.strongbox.providers.repository.event.RemoteRepositorySearc
 import org.carlspring.strongbox.service.ProxyRepositoryConnectionPoolConfigurationService;
 import org.carlspring.strongbox.services.ArtifactEntryService;
 import org.carlspring.strongbox.services.ArtifactTagService;
-import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.Repository;
-import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.validation.artifact.version.GenericReleaseVersionValidator;
 import org.carlspring.strongbox.storage.validation.artifact.version.GenericSnapshotVersionValidator;
 import org.carlspring.strongbox.storage.validation.deployment.RedeploymentValidator;
-import org.carlspring.strongbox.xml.configuration.repository.NugetRepositoryConfiguration;
+import org.carlspring.strongbox.xml.configuration.repository.ImmutableNugetRepositoryConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -117,10 +117,10 @@ public class NugetRepositoryFeatures
                                    NugetSearchRequest nugetSearchRequest)
             throws ArtifactTransportException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
-        Optional<NugetRepositoryConfiguration> repositoryConfiguration = Optional.ofNullable((NugetRepositoryConfiguration) repository.getRepositoryConfiguration());
+        Optional<ImmutableNugetRepositoryConfiguration> repositoryConfiguration = Optional.ofNullable((ImmutableNugetRepositoryConfiguration) repository.getRepositoryConfiguration());
         Integer remoteFeedPageSize = repositoryConfiguration.map(c -> c.getRemoteFeedPageSize())
                                                             .orElse(REMOTE_FEED_PAGE_SIZE);
         for (int i = 0; true; i++)
@@ -140,10 +140,10 @@ public class NugetRepositoryFeatures
                                       int top)
         throws ArtifactTransportException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
-        RemoteRepository remoteRepository = repository.getRemoteRepository();
+        ImmutableRemoteRepository remoteRepository = repository.getRemoteRepository();
         if (remoteRepository == null)
         {
             return false;
@@ -189,7 +189,7 @@ public class NugetRepositoryFeatures
         return true;
     }
 
-    private void parseFeed(Repository repository,
+    private void parseFeed(ImmutableRepository repository,
                            PackageFeed packageFeed)
     {
         String repositoryId = repository.getId();
@@ -250,7 +250,7 @@ public class NugetRepositoryFeatures
         }
     }
 
-    protected Configuration getConfiguration()
+    protected ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }
@@ -276,9 +276,9 @@ public class NugetRepositoryFeatures
         @Override
         public void handle(RemoteRepositorySearchEvent event)
         {
-            Storage storage = getConfiguration().getStorage(event.getSorageId());
-            Repository repository = storage.getRepository(event.getRepositoryId());
-            RemoteRepository remoteRepository = repository.getRemoteRepository();
+            ImmutableStorage storage = getConfiguration().getStorage(event.getSorageId());
+            ImmutableRepository repository = storage.getRepository(event.getRepositoryId());
+            ImmutableRemoteRepository remoteRepository = repository.getRemoteRepository();
             if (remoteRepository == null)
             {
                 return;

@@ -2,11 +2,19 @@ package org.carlspring.strongbox.configuration;
 
 import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableHttpConnectionPool;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
+import org.carlspring.strongbox.storage.repository.RepositoryTypeEnum;
 import org.carlspring.strongbox.storage.routing.ImmutableRoutingRules;
 import org.carlspring.strongbox.storage.routing.RoutingRules;
 
+import javax.annotation.concurrent.Immutable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 import static java.util.stream.Collectors.toMap;
@@ -14,6 +22,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableConfiguration
 {
 
@@ -142,4 +151,80 @@ public class ImmutableConfiguration
     {
         return routingRules;
     }
+
+    public List<ImmutableRepository> getRepositoriesWithLayout(String storageId,
+                                                               String layout)
+    {
+        Stream<ImmutableRepository> repositories;
+        if (storageId != null)
+        {
+            ImmutableStorage storage = getStorage(storageId);
+            if (storage != null)
+            {
+                repositories = storage.getRepositories().values().stream();
+            }
+            else
+            {
+                return Collections.emptyList();
+            }
+        }
+        else
+        {
+            repositories = getStorages().values().stream().flatMap(
+                    storage -> storage.getRepositories().values().stream());
+        }
+
+        return repositories.filter(repository -> repository.getLayout().equals(layout))
+                           .collect(Collectors.toList());
+    }
+
+    public List<ImmutableRepository> getGroupRepositories()
+    {
+        List<ImmutableRepository> groupRepositories = new ArrayList<>();
+
+        for (ImmutableStorage storage : getStorages().values())
+        {
+            groupRepositories.addAll(storage.getRepositories()
+                                            .values()
+                                            .stream()
+                                            .filter(repository -> repository.getType()
+                                                                            .equals(RepositoryTypeEnum.GROUP.getType()))
+                                            .collect(Collectors.toList()));
+        }
+
+        return groupRepositories;
+    }
+
+    public ImmutableRepository getRepository(String storageId,
+                                             String repositoryId)
+    {
+        return getStorage(storageId).getRepository(repositoryId);
+    }
+
+    public List<ImmutableRepository> getGroupRepositoriesContaining(String storageId,
+                                                                    String repositoryId)
+    {
+        List<ImmutableRepository> groupRepositories = new ArrayList<>();
+
+        ImmutableStorage storage = getStorage(storageId);
+
+        groupRepositories.addAll(storage.getRepositories()
+                                        .values()
+                                        .stream()
+                                        .filter(repository -> repository.getType()
+                                                                        .equals(RepositoryTypeEnum.GROUP.getType()))
+                                        .filter(repository -> repository.getGroupRepositories()
+                                                                        .keySet()
+                                                                        .contains(repositoryId))
+                                        .collect(Collectors.toList()));
+
+        return groupRepositories;
+    }
+
+    public ImmutableHttpConnectionPool getHttpConnectionPoolConfiguration(String storageId,
+                                                                          String repositoryId)
+    {
+        return getStorage(storageId).getRepository(repositoryId).getHttpConnectionPool();
+    }
+
 }

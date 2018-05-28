@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.storage.indexing.downloader;
 
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import org.apache.maven.index.Indexer;
@@ -13,9 +14,9 @@ public class IndexDownloadRequest
 
     private final Indexer indexer;
 
-    private final Repository repository;
+    private final ImmutableRepository repository;
 
-    public IndexDownloadRequest(Repository repository,
+    public IndexDownloadRequest(ImmutableRepository repository,
                                 Indexer indexer)
     {
         this.repository = repository;
@@ -27,7 +28,7 @@ public class IndexDownloadRequest
         return indexer;
     }
 
-    public Repository getRepository()
+    public ImmutableRepository getRepository()
     {
         return repository;
     }

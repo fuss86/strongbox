@@ -6,6 +6,7 @@ import org.carlspring.strongbox.repository.NpmRepositoryFeatures;
 import org.carlspring.strongbox.repository.NpmRepositoryManagementStrategy;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategy;
 import org.carlspring.strongbox.services.ArtifactManagementService;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.annotation.PostConstruct;
@@ -122,7 +123,7 @@ public class NpmLayoutProvider
     }
 
     @Override
-    public RepositoryPath resolve(Repository repository,
+    public RepositoryPath resolve(ImmutableRepository repository,
                                   URI resource)
     {
         NpmArtifactCoordinates c = NpmArtifactCoordinates.of(resource);

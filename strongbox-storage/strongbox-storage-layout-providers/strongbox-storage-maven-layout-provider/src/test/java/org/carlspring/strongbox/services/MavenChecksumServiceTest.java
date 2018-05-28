@@ -6,6 +6,7 @@ import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryPolicyEnum;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
@@ -81,8 +82,7 @@ public class MavenChecksumServiceTest
     {
 
         Repository repository = new Repository(REPOSITORY_RELEASES);
-        repository.setStorage(configurationManager.getConfiguration()
-                                                  .getStorage(STORAGE0));
+        repository.setStorage(getStorage(STORAGE0));
         repository.setAllowsForceDeletion(true);
 
         createRepository(STORAGE0, REPOSITORY_RELEASES, RepositoryPolicyEnum.RELEASE.getPolicy(), false);
@@ -290,7 +290,7 @@ public class MavenChecksumServiceTest
 
     private LayoutProvider getLayoutProvider(String repositoryId)
     {
-        Repository repository = configurationManager.getRepository(STORAGE0, repositoryId);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0, repositoryId);
 
         return layoutProviderRegistry.getProvider(repository.getLayout());
     }

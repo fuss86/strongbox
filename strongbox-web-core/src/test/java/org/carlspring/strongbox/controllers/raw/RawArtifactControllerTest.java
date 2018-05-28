@@ -64,10 +64,10 @@ public class RawArtifactControllerTest
     {
         super.init();
 
-        Repository repository = rawRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES);
+        Repository repository = rawRepositoryFactory.createRepository(REPOSITORY_RELEASES);
         repository.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
 
-        createRepositoryWithFile(repository, "org/foo/bar/blah.zip");
+        createRepositoryWithFile(repository, STORAGE0, "org/foo/bar/blah.zip");
 
         //noinspection ResultOfMethodCallIgnored
         Files.createDirectories(Paths.get(TEST_RESOURCES));

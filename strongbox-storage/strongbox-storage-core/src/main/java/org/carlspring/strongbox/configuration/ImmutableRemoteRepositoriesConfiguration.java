@@ -1,8 +1,11 @@
 package org.carlspring.strongbox.configuration;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableRemoteRepositoriesConfiguration
 {
 

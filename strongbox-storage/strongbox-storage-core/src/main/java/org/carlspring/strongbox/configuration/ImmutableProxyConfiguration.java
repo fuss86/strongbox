@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.configuration;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import jersey.repackaged.com.google.common.collect.ImmutableList;
  * @author Przemyslaw Fusik
  * @see ProxyConfiguration
  */
+@Immutable
 public class ImmutableProxyConfiguration
 {
 

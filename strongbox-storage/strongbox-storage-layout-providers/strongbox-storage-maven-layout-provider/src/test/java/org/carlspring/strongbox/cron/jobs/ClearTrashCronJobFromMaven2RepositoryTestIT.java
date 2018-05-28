@@ -10,6 +10,7 @@ import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.providers.layout.Maven2LayoutProvider;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.MavenRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.xml.configuration.repository.MavenRepositoryConfiguration;
@@ -116,34 +117,34 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
         MavenRepositoryConfiguration mavenRepositoryConfiguration = new MavenRepositoryConfiguration();
         mavenRepositoryConfiguration.setIndexingEnabled(false);
 
-        repository1 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES_1);
+        repository1 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES_1);
         repository1.setAllowsForceDeletion(false);
         repository1.setTrashEnabled(true);
         repository1.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository1);
+        createRepository(repository1, STORAGE0);
 
         generateArtifact(REPOSITORY_RELEASES_BASEDIR_1.getAbsolutePath(),
                          "org.carlspring.strongbox.clear:strongbox-test-one:1.0:jar");
 
-        repository2 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES_2);
+        repository2 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES_2);
         repository2.setAllowsForceDeletion(false);
         repository2.setTrashEnabled(true);
         repository2.setRepositoryConfiguration(mavenRepositoryConfiguration);
         repository2.setRepositoryConfiguration(mavenRepositoryConfiguration);
-        createRepository(repository2);
+        createRepository(repository2, STORAGE0);
 
         generateArtifact(REPOSITORY_RELEASES_BASEDIR_2.getAbsolutePath(),
                          "org.carlspring.strongbox.clear:strongbox-test-two:1.0:jar");
 
         createStorage(new Storage(STORAGE1));
 
-        repository3 = mavenRepositoryFactory.createRepository(STORAGE1, REPOSITORY_RELEASES_1);
+        repository3 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES_1);
         repository3.setAllowsForceDeletion(false);
         repository3.setTrashEnabled(true);
         repository3.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository3);
+        createRepository(repository3, STORAGE1);
 
         generateArtifact(REPOSITORY_RELEASES_BASEDIR_3.getAbsolutePath(),
                          "org.carlspring.strongbox.clear:strongbox-test-one:1.0:jar");
@@ -201,7 +202,7 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
 
     private File[] getDirs()
     {
-        final RepositoryPath trashPath = repositoryTrashPathResolver.resolve(repository1);
+        final RepositoryPath trashPath = repositoryTrashPathResolver.resolve(new ImmutableRepository(repository1));
         final List<File> files = new ArrayList<>();
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(trashPath))
         {
@@ -229,7 +230,7 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
         {
             removeNotMavenRepositories(currentConfiguration);
 
-            final File basedirTrash1 = repositoryTrashPathResolver.resolve(repository2).toFile();
+            final File basedirTrash1 = repositoryTrashPathResolver.resolve(new ImmutableRepository(repository2)).toFile();
             File[] dirs1 = basedirTrash1.listFiles();
 
             assertTrue("There is no path to the repository trash!", dirs1 != null);
@@ -239,7 +240,7 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
             String path1 = "org/carlspring/strongbox/clear/strongbox-test-two/1.0";
             layoutProvider1.delete(STORAGE0, REPOSITORY_RELEASES_2, path1, false);
 
-            final File basedirTrash2 = repositoryTrashPathResolver.resolve(repository3).toFile();
+            final File basedirTrash2 = repositoryTrashPathResolver.resolve(new ImmutableRepository(repository3)).toFile();
             File[] dirs2 = basedirTrash2.listFiles();
 
             assertTrue("There is no path to the repository trash!", dirs2 != null);
@@ -278,9 +279,7 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
         }
         finally
         {
-            configurationBackup.setUuid(null);
-            configurationBackup.setObjectId(null);
-            configurationManagementService.save(configurationBackup);
+            configurationManagementService.setConfiguration(configurationBackup);
         }
     }
 
@@ -298,7 +297,7 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
                 storage.removeRepository(repository.getId());
             }
         }
-        configurationManagementService.save(currentConfiguration);
+        configurationManagementService.setConfiguration(currentConfiguration);
     }
 
 }

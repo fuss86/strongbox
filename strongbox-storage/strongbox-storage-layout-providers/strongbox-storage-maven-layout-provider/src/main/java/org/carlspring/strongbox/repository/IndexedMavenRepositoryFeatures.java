@@ -5,6 +5,7 @@ import org.carlspring.strongbox.config.MavenIndexerEnabledCondition;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.ReindexArtifactScanningListener;
@@ -12,7 +13,9 @@ import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
 import org.carlspring.strongbox.storage.indexing.downloader.IndexDownloadRequest;
 import org.carlspring.strongbox.storage.indexing.downloader.IndexDownloader;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.xml.configuration.repository.ImmutableMavenRepositoryConfiguration;
 import org.carlspring.strongbox.xml.configuration.repository.MavenRepositoryConfiguration;
 
 import javax.inject.Inject;
@@ -65,8 +68,8 @@ public class IndexedMavenRepositoryFeatures
             throws ArtifactTransportException,
                    IOException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         RepositoryPath repositoryBasedir = repositoryPathResolver.resolve(repository);
         RepositoryPath remoteIndexDirectory = repositoryBasedir.resolve(".index").resolve(
@@ -197,9 +200,9 @@ public class IndexedMavenRepositoryFeatures
                result.resolve(path);
     }
 
-    public boolean isIndexingEnabled(Repository repository)
+    public boolean isIndexingEnabled(ImmutableRepository repository)
     {
-        MavenRepositoryConfiguration repositoryConfiguration = (MavenRepositoryConfiguration) repository.getRepositoryConfiguration();
+        ImmutableMavenRepositoryConfiguration repositoryConfiguration = (ImmutableMavenRepositoryConfiguration) repository.getRepositoryConfiguration();
 
         return repositoryConfiguration != null && repositoryConfiguration.isIndexingEnabled();
     }

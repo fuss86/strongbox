@@ -68,14 +68,4 @@ public class StorageProviderRegistry extends AbstractMappedProviderRegistry<Stor
         super.removeProvider(alias);
     }
 
-    public Storage getStorage(String storageId)
-    {
-        return getConfiguration().getStorages().get(storageId);
-    }
-
-    public Configuration getConfiguration()
-    {
-        return configurationManagementService.getConfiguration();
-    }
-
 }

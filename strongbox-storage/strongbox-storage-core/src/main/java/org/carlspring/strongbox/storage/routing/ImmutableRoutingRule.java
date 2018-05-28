@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.storage.routing;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -9,6 +10,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableRoutingRule
 {
 

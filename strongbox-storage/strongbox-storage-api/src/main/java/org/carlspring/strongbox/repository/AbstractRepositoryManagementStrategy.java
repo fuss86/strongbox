@@ -1,11 +1,14 @@
 package org.carlspring.strongbox.repository;
 
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.io.RepositoryFileSystem;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -37,14 +40,14 @@ public abstract class AbstractRepositoryManagementStrategy
     {
         logger.debug(String.format("Creating repository [%s/%s]...", storageId, repositoryId));
 
-        Storage storage = getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         createRepositoryStructure(repository);
         createRepositoryInternal(storage, getRepository(storageId, repositoryId));
     }
 
     @Override
-    public void createRepositoryStructure(final Repository repository)
+    public void createRepositoryStructure(final ImmutableRepository repository)
             throws IOException
     {
         final RepositoryPath rootRepositoryPath = repositoryPathResolver.resolve(repository);
@@ -59,19 +62,19 @@ public abstract class AbstractRepositoryManagementStrategy
         }
     }
 
-    protected void createRepositoryInternal(Storage storage,
-                                            Repository repository)
+    protected void createRepositoryInternal(ImmutableStorage storage,
+                                            ImmutableRepository repository)
             throws IOException, RepositoryManagementStrategyException
     {
         // override if needed
     }
 
-    protected Storage getStorage(String storageId)
+    protected ImmutableStorage getStorage(String storageId)
     {
         return getConfiguration().getStorage(storageId);
     }
 
-    protected Repository getRepository(String storageId,
+    protected ImmutableRepository getRepository(String storageId,
                                        String repositoryId)
     {
         return getStorage(storageId).getRepository(repositoryId);
@@ -90,7 +93,7 @@ public abstract class AbstractRepositoryManagementStrategy
                                          String repositoryId)
             throws IOException
     {
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
 
         RepositoryPath repositoryPath = repositoryPathResolver.resolve(repository);
 
@@ -107,7 +110,7 @@ public abstract class AbstractRepositoryManagementStrategy
     }
 
 
-    protected Configuration getConfiguration()
+    protected ImmutableConfiguration getConfiguration()
     {
         return configurationManagementService.getConfiguration();
     }

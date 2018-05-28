@@ -63,7 +63,7 @@ public class ConfigurationManagerTest
     @Test
     public void testParseConfiguration()
     {
-        final Configuration configuration = configurationManager.getConfiguration();
+        final ImmutableConfiguration configuration = configurationManager.getConfiguration();
 
         assertNotNull(configuration);
         assertNotNull(configuration.getStorages());
@@ -91,7 +91,7 @@ public class ConfigurationManagerTest
                                 .get("storage0")
                                 .getRepositories()
                                 .get("releases")
-                                .allowsDirectoryBrowsing());
+                                .isAllowsDirectoryBrowsing());
     }
 
     @Test

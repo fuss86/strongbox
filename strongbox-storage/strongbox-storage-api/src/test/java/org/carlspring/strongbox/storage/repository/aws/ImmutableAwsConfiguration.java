@@ -2,9 +2,12 @@ package org.carlspring.strongbox.storage.repository.aws;
 
 import org.carlspring.strongbox.storage.repository.ImmutableCustomConfiguration;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableAwsConfiguration
         extends ImmutableCustomConfiguration
 {

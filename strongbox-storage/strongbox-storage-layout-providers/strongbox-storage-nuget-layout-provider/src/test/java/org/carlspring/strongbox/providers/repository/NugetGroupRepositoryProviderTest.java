@@ -7,6 +7,7 @@ import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.layout.NugetLayoutProvider;
 import org.carlspring.strongbox.services.ArtifactManagementService;
 import org.carlspring.strongbox.services.RepositoryManagementService;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.NugetRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryTypeEnum;
@@ -205,7 +206,7 @@ public class NugetGroupRepositoryProviderTest
     @Test
     public void testGroupSearch()
     {
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
         
         RepositorySearchRequest searchRequest = new RepositorySearchRequest(STORAGE0, REPOSITORY_GROUP);

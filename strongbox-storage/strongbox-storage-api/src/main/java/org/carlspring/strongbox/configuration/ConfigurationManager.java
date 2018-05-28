@@ -51,7 +51,7 @@ public class ConfigurationManager
 
     public ImmutableConfiguration getConfiguration()
     {
-        return new ImmutableConfiguration(configurationService.getConfiguration());
+        return configurationService.getConfiguration();
     }
 
     public URI getBaseUri()

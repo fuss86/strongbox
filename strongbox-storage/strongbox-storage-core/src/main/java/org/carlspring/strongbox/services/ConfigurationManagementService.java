@@ -1,15 +1,13 @@
 package org.carlspring.strongbox.services;
 
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.configuration.ProxyConfiguration;
 import org.carlspring.strongbox.storage.Storage;
-import org.carlspring.strongbox.storage.repository.HttpConnectionPool;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.routing.RoutingRule;
-import org.carlspring.strongbox.storage.routing.RoutingRules;
 import org.carlspring.strongbox.storage.routing.RuleSet;
-
-import java.util.List;
 
 /**
  * @author mtodorov
@@ -17,9 +15,9 @@ import java.util.List;
 public interface ConfigurationManagementService
 {
 
-    void setConfiguration(Configuration configuration);
+    ImmutableConfiguration getConfiguration();
 
-    void save(Configuration Configuration);
+    void setConfiguration(Configuration configuration);
 
     void setInstanceName(String instanceName);
 
@@ -64,6 +62,10 @@ public interface ConfigurationManagementService
     boolean overrideAcceptedRepositories(String groupRepository,
                                          RoutingRule routingRule);
 
+    void addRepositoryToGroup(String storageId,
+                              String repositoryId,
+                              String repositoryGroupMemberId);
+
     void setRepositoryArtifactCoordinateValidators();
 
     void putInService(String storageId,
@@ -71,4 +73,8 @@ public interface ConfigurationManagementService
 
     void putOutOfService(String storageId,
                          String repositoryId);
+
+    void setArtifactMaxSize(String storageId,
+                            String repositoryId,
+                            long value);
 }

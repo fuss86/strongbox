@@ -3,6 +3,7 @@ package org.carlspring.strongbox.storage;
 import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableStorage
 {
 

@@ -3,7 +3,9 @@ package org.carlspring.strongbox.repository;
 import org.carlspring.strongbox.cron.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.cron.jobs.DownloadRemoteFeedCronJob;
 import org.carlspring.strongbox.cron.services.CronTaskConfigurationService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -26,8 +28,8 @@ public class NugetRepositoryManagementStrategy
     private CronTaskConfigurationService cronTaskConfigurationService;
 
     @Override
-    protected void createRepositoryInternal(Storage storage,
-                                            Repository repository)
+    protected void createRepositoryInternal(ImmutableStorage storage,
+                                            ImmutableRepository repository)
         throws RepositoryManagementStrategyException
     {
         String storageId = storage.getId();

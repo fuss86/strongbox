@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.testing;
 
-import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.storage.Storage;
@@ -119,7 +119,7 @@ public class TestCaseWithRepository
         }
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManagementService.getConfiguration();
     }

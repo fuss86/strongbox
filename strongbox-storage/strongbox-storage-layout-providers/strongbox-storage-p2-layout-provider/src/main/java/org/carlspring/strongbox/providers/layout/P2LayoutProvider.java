@@ -10,6 +10,7 @@ import org.carlspring.strongbox.repository.P2RepositoryFeatures;
 import org.carlspring.strongbox.repository.P2RepositoryManagementStrategy;
 import org.carlspring.strongbox.services.ArtifactManagementService;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -94,7 +95,7 @@ public class P2LayoutProvider
     }
 
     @Override
-    public boolean containsArtifact(Repository repository,
+    public boolean containsArtifact(ImmutableRepository repository,
                                     ArtifactCoordinates coordinates)
             throws IOException
     {
@@ -116,7 +117,7 @@ public class P2LayoutProvider
     }
 
     @Override
-    public boolean containsPath(Repository repository,
+    public boolean containsPath(ImmutableRepository repository,
                                 String path)
             throws IOException
     {

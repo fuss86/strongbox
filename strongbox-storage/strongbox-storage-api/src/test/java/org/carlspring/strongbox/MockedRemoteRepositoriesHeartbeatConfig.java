@@ -1,5 +1,6 @@
 package org.carlspring.strongbox;
 
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoriesHeartbeatMonitorInitiator;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoryAlivenessCacheManager;
@@ -23,7 +24,7 @@ public class MockedRemoteRepositoriesHeartbeatConfig
     {
         RemoteRepositoryAlivenessCacheManager remoteRepositoryAlivenessCacheManager = Mockito.mock(
                 RemoteRepositoryAlivenessCacheManager.class);
-        Mockito.when(remoteRepositoryAlivenessCacheManager.isAlive(any(RemoteRepository.class))).thenReturn(true);
+        Mockito.when(remoteRepositoryAlivenessCacheManager.isAlive(any(ImmutableRemoteRepository.class))).thenReturn(true);
         return remoteRepositoryAlivenessCacheManager;
     }
 

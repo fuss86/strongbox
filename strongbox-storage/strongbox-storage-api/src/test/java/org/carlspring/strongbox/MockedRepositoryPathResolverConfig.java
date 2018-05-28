@@ -8,6 +8,7 @@ import org.carlspring.strongbox.providers.io.RootRepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.providers.layout.RepositoryLayoutFileSystemProvider;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import java.nio.file.FileSystem;
@@ -39,7 +40,7 @@ public class MockedRepositoryPathResolverConfig
     {
         
         @Override
-        public RepositoryPath resolve(final Repository repository,
+        public RepositoryPath resolve(final ImmutableRepository repository,
                                       final String... paths)
         {
             final LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());

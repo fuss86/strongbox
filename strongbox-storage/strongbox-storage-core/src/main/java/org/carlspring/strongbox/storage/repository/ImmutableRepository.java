@@ -9,6 +9,7 @@ import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
 import org.carlspring.strongbox.xml.repository.CustomRepositoryConfiguration;
 import org.carlspring.strongbox.xml.repository.ImmutableCustomRepositoryConfiguration;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Przemyslaw Fusik
  */
+@Immutable
 public class ImmutableRepository
 {
 

@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.repository;
 
-import org.carlspring.strongbox.storage.repository.Repository;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ public interface RepositoryManagementStrategy
                           String repositoryId)
             throws IOException, RepositoryManagementStrategyException;
 
-    void createRepositoryStructure(Repository repository)
+    void createRepositoryStructure(ImmutableRepository repository)
             throws IOException;
 
     void removeRepository(String storageId,

@@ -45,8 +45,7 @@ public class StorageApiConfig
     @Inject
     private ConfigurationManagementService configurationManagementService;
 
-    @Inject
-    private ProxyRepositoryConnectionPoolConfigurationService proxyRepositoryConnectionPoolConfigurationService;
+
 
     @PostConstruct
     public void init()
@@ -57,8 +56,7 @@ public class StorageApiConfig
     private Object doInit()
     {
         final org.carlspring.strongbox.configuration.Configuration configuration = configurationFileManager.read();
-        setProxyRepositoryConnectionPoolConfigurations(configuration);
-        configurationManagementService.save(configuration);
+        configurationManagementService.setConfiguration(configuration);
         return null;
     }
 
@@ -88,20 +86,6 @@ public class StorageApiConfig
     StorageBooter getStorageBooter()
     {
         return new StorageBooter();
-    }
-
-
-    private void setProxyRepositoryConnectionPoolConfigurations(final org.carlspring.strongbox.configuration.Configuration configuration)
-    {
-        configuration.getStorages().values().stream()
-                     .filter(storage -> MapUtils.isNotEmpty(storage.getRepositories()))
-                     .flatMap(storage -> storage.getRepositories().values().stream())
-                     .filter(repository -> repository.getHttpConnectionPool() != null &&
-                                           repository.getRemoteRepository() != null &&
-                                           repository.getRemoteRepository().getUrl() != null)
-                     .forEach(repository -> proxyRepositoryConnectionPoolConfigurationService.setMaxPerRepository(
-                             repository.getRemoteRepository().getUrl(),
-                             repository.getHttpConnectionPool().getAllocatedConnections()));
     }
 
 }

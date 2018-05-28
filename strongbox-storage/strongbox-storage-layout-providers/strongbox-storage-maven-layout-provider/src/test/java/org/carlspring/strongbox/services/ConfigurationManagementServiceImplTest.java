@@ -2,12 +2,17 @@ package org.carlspring.strongbox.services;
 
 import org.carlspring.strongbox.config.Maven2LayoutProviderTestConfig;
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.layout.Maven2LayoutProvider;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.repository.HttpConnectionPool;
+import org.carlspring.strongbox.storage.repository.ImmutableHttpConnectionPool;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.MavenRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryTypeEnum;
+import org.carlspring.strongbox.storage.routing.ImmutableRuleSet;
 import org.carlspring.strongbox.storage.routing.RoutingRule;
 import org.carlspring.strongbox.storage.routing.RuleSet;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
@@ -126,8 +131,9 @@ public class ConfigurationManagementServiceImplTest
     @Test
     public void groupRepositoriesShouldBeSortedAsExpected()
     {
-        Repository repository = configurationManagementService.getRepository("storage-common-proxies",
-                                                                             "group-common-proxies");
+        ImmutableRepository repository = configurationManagementService.getConfiguration().getRepository(
+                "storage-common-proxies",
+                "group-common-proxies");
 
         Iterator<String> iterator = repository.getGroupRepositories().keySet().iterator();
         assertThat(iterator.next(), CoreMatchers.equalTo("carlspring"));
@@ -139,14 +145,13 @@ public class ConfigurationManagementServiceImplTest
     @Test
     public void additionOfTheSameGroupRepositoryShouldNotAffectGroupRepositoriesList()
     {
-        Configuration configuration = configurationManagementService.getConfiguration();
-        configuration.getStorage("storage-common-proxies")
-                     .getRepository("group-common-proxies")
-                     .addRepositoryToGroup("maven-central");
-        configurationManagementService.save(configuration);
+        configurationManagementService.addRepositoryToGroup("storage-common-proxies",
+                                                            "group-common-proxies",
+                                                            "maven-central");
 
-        Repository repository = configurationManagementService.getRepository("storage-common-proxies",
-                                                                             "group-common-proxies");
+        ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                       .getRepository("storage-common-proxies",
+                                                                                      "group-common-proxies");
 
         assertThat(repository.getGroupRepositories().size(), CoreMatchers.equalTo(4));
         Iterator<String> iterator = repository.getGroupRepositories().keySet().iterator();
@@ -159,18 +164,19 @@ public class ConfigurationManagementServiceImplTest
     @Test
     public void multipleAdditionOfTheSameRepositoryShouldNotAffectGroup()
     {
-        Configuration configuration = configurationManagementService.getConfiguration();
-        Repository r = configuration.getStorage("storage-common-proxies")
-                     .getRepository("group-common-proxies");
+        configurationManagementService.addRepositoryToGroup("storage-common-proxies",
+                                                            "group-common-proxies",
+                                                            "maven-central");
+        configurationManagementService.addRepositoryToGroup("storage-common-proxies",
+                                                            "group-common-proxies",
+                                                            "maven-central");
+        configurationManagementService.addRepositoryToGroup("storage-common-proxies",
+                                                            "group-common-proxies",
+                                                            "maven-central");
 
-        r.addRepositoryToGroup("maven-central");
-        r.addRepositoryToGroup("maven-central");
-        r.addRepositoryToGroup("maven-central");
-
-        configurationManagementService.save(configuration);
-
-        Repository repository = configurationManagementService.getRepository("storage-common-proxies",
-                                                                             "group-common-proxies");
+        ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                       .getRepository("storage-common-proxies",
+                                                                                      "group-common-proxies");
 
         assertThat(repository.getGroupRepositories().size(), CoreMatchers.equalTo(4));
         Iterator<String> iterator = repository.getGroupRepositories().keySet().iterator();
@@ -183,13 +189,13 @@ public class ConfigurationManagementServiceImplTest
     @Test
     public void testGetGroupRepositories()
     {
-        List<Repository> groupRepositories = configurationManagementService.getGroupRepositories();
+        List<ImmutableRepository> groupRepositories = configurationManagementService.getConfiguration().getGroupRepositories();
 
         assertFalse(groupRepositories.isEmpty());
 
         logger.debug("Group repositories:");
 
-        for (Repository repository : groupRepositories)
+        for (ImmutableRepository repository : groupRepositories)
         {
             logger.debug(" - " + repository.getId());
         }
@@ -198,14 +204,15 @@ public class ConfigurationManagementServiceImplTest
     @Test
     public void testGetGroupRepositoriesContainingRepository()
     {
-        List<Repository> groups = configurationManagementService.getGroupRepositoriesContaining(STORAGE0,
-                                                                                                REPOSITORY_RELEASES_1);
+        List<ImmutableRepository> groups = configurationManagementService.getConfiguration()
+                                                                         .getGroupRepositoriesContaining(STORAGE0,
+                                                                                                         REPOSITORY_RELEASES_1);
 
         assertFalse(groups.isEmpty());
 
         logger.debug("Group repositories containing \"" + REPOSITORY_RELEASES_1 + "\" repository:");
 
-        for (Repository repository : groups)
+        for (ImmutableRepository repository : groups)
         {
             logger.debug(" - " + repository.getId());
         }
@@ -217,14 +224,16 @@ public class ConfigurationManagementServiceImplTest
     {
         assertEquals("Failed to add repository to group!",
                      2,
-                     configurationManagementService.getGroupRepositoriesContaining(STORAGE0,
+                     configurationManagementService.getConfiguration()
+                                                   .getGroupRepositoriesContaining(STORAGE0,
                                                                                    REPOSITORY_RELEASES_1).size());
 
         configurationManagementService.removeRepositoryFromAssociatedGroups(STORAGE0, REPOSITORY_RELEASES_1);
 
         assertEquals("Failed to remove repository from all associated groups!",
                      0,
-                     configurationManagementService.getGroupRepositoriesContaining(STORAGE0,
+                     configurationManagementService.getConfiguration()
+                                                   .getGroupRepositoriesContaining(STORAGE0,
                                                                                    REPOSITORY_RELEASES_1).size());
 
         configurationManagementService.removeRepository(STORAGE0, REPOSITORY_GROUP_1);
@@ -235,16 +244,16 @@ public class ConfigurationManagementServiceImplTest
     public void testSetProxyRepositoryMaxConnections()
             throws IOException, JAXBException
     {
-        Storage storage = configurationManagementService.getStorage(STORAGE0);
+        ImmutableStorage storage = configurationManagementService.getConfiguration().getStorage(STORAGE0);
 
-        Repository repository = storage.getRepository(REPOSITORY_RELEASES_2);
+        ImmutableRepository repository = storage.getRepository(REPOSITORY_RELEASES_2);
 
         configurationManagementService.saveRepository(STORAGE0, repository);
 
         configurationManagementService.setProxyRepositoryMaxConnections(storage.getId(), repository.getId(), 10);
 
-        HttpConnectionPool pool = configurationManagementService.getHttpConnectionPoolConfiguration(storage.getId(),
-                                                                                                    repository.getId());
+        ImmutableHttpConnectionPool pool = configurationManagementService.getConfiguration().getHttpConnectionPoolConfiguration(storage.getId(),
+                                                                                                                                repository.getId());
 
         assertNotNull(pool);
         assertEquals(10, pool.getAllocatedConnections());
@@ -276,8 +285,8 @@ public class ConfigurationManagementServiceImplTest
 
         final boolean removed = configurationManagementService.removeAcceptedRuleSet(REPOSITORY_GROUP_1);
 
-        final Configuration configuration = configurationManagementService.getConfiguration();
-        final RuleSet addedRuleSet = configuration.getRoutingRules().getAccepted().get(REPOSITORY_GROUP_1);
+        final ImmutableConfiguration configuration = configurationManagementService.getConfiguration();
+        final ImmutableRuleSet addedRuleSet = configuration.getRoutingRules().getAccepted().get(REPOSITORY_GROUP_1);
 
         assertTrue(removed);
         assertNull(addedRuleSet);
