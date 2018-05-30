@@ -68,15 +68,15 @@ public class MavenMetadataManagementControllerTest
             throws Exception
     {
         // Create repositories
-        Repository repositoryReleases = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES);
+        Repository repositoryReleases = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES);
         repositoryReleases.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
 
-        createRepository(repositoryReleases);
+        createRepository(repositoryReleases, STORAGE0);
 
-        Repository repositorySnapshots = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_SNAPSHOTS);
+        Repository repositorySnapshots = mavenRepositoryFactory.createRepository(REPOSITORY_SNAPSHOTS);
         repositorySnapshots.setPolicy(RepositoryPolicyEnum.SNAPSHOT.getPolicy());
 
-        createRepository(repositorySnapshots);
+        createRepository(repositorySnapshots, STORAGE0);
 
         // Generate artifacts
         generateArtifact(getRepositoryBasedir(STORAGE0, REPOSITORY_RELEASES).getAbsolutePath(),

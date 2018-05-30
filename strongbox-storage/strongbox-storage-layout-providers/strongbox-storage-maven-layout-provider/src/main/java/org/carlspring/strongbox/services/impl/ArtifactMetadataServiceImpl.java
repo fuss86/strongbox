@@ -4,22 +4,23 @@ import org.carlspring.maven.commons.util.ArtifactUtils;
 import org.carlspring.strongbox.artifact.MavenArtifact;
 import org.carlspring.strongbox.artifact.MavenArtifactUtils;
 import org.carlspring.strongbox.artifact.locator.ArtifactDirectoryLocator;
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.event.artifact.ArtifactEventListenerRegistry;
 import org.carlspring.strongbox.locator.handlers.GenerateMavenMetadataOperation;
 import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
-import org.carlspring.strongbox.providers.io.RepositoryTempPathResolver;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.providers.layout.Maven2LayoutProvider;
 import org.carlspring.strongbox.services.ArtifactMetadataService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.metadata.MavenMetadataManager;
 import org.carlspring.strongbox.storage.metadata.MetadataHelper;
 import org.carlspring.strongbox.storage.metadata.MetadataType;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -77,8 +78,8 @@ public class ArtifactMetadataServiceImpl
             throws IOException,
                    XmlPullParserException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         RepositoryPath artifactBasePath = repositoryPathResolver.resolve(repository, artifactPath);
 
@@ -105,9 +106,9 @@ public class ArtifactMetadataServiceImpl
                                 String basePath)
             throws IOException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
 
-        for (Repository repository : storage.getRepositories().values())
+        for (ImmutableRepository repository : storage.getRepositories().values())
         {
             rebuildMetadata(storageId, repository.getId(), basePath);
         }
@@ -119,8 +120,8 @@ public class ArtifactMetadataServiceImpl
                                 String basePath)
             throws IOException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         if (!Maven2LayoutProvider.ALIAS.equals(repository.getLayout()))
         {
@@ -154,7 +155,7 @@ public class ArtifactMetadataServiceImpl
                    NoSuchAlgorithmException,
                    ProviderImplementationException
     {
-        Repository repository = getConfiguration().getStorage(storageId).getRepository(repositoryId);
+        ImmutableRepository repository = getConfiguration().getStorage(storageId).getRepository(repositoryId);
 
         mavenMetadataManager.mergeAndStore(repository, artifact, mergeMetadata);
     }
@@ -168,8 +169,8 @@ public class ArtifactMetadataServiceImpl
             throws IOException,
                    XmlPullParserException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         RepositoryPath artifactBasePath = repositoryPathResolver.resolve(repository, artifactPath);
 
@@ -213,8 +214,8 @@ public class ArtifactMetadataServiceImpl
             throws IOException,
                    NoSuchAlgorithmException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         String snapshot = ArtifactUtils.getSnapshotBaseVersion(version);
 
@@ -266,8 +267,8 @@ public class ArtifactMetadataServiceImpl
                               MetadataType metadataType)
             throws IOException, XmlPullParserException, NoSuchAlgorithmException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         RepositoryPath artifactBasePath = repositoryPathResolver.resolve(repository, artifactPath);
 
@@ -304,8 +305,8 @@ public class ArtifactMetadataServiceImpl
                                                  String classifier)
             throws IOException, NoSuchAlgorithmException
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         String snapshot = ArtifactUtils.getSnapshotBaseVersion(version);
 
@@ -352,8 +353,8 @@ public class ArtifactMetadataServiceImpl
                                String repositoryId,
                                String metadataPath)
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         RepositoryPath repositoryPath = layoutProvider.resolve(repository);
@@ -382,7 +383,7 @@ public class ArtifactMetadataServiceImpl
         }
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

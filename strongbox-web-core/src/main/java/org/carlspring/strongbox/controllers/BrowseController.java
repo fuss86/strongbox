@@ -5,7 +5,9 @@ import org.carlspring.strongbox.domain.DirectoryListing;
 import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.services.ArtifactResolutionService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -106,7 +108,7 @@ public class BrowseController extends BaseArtifactController
 
         try
         {
-            Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+            ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
             if (storage == null)
             {
                 return getNotFoundResponseEntity("The requested storage was not found.", acceptHeader);
@@ -154,13 +156,13 @@ public class BrowseController extends BaseArtifactController
 
         try
         {
-            Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+            ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
             if (storage == null)
             {
                 return getNotFoundResponseEntity("The requested storage was not found.", acceptHeader);
             }
 
-            Repository repository = storage.getRepository(repositoryId);
+            ImmutableRepository repository = storage.getRepository(repositoryId);
             if (repository == null)
             {
                 return getNotFoundResponseEntity("The requested repository was not found.", acceptHeader);
@@ -177,7 +179,7 @@ public class BrowseController extends BaseArtifactController
                 return getServiceUnavailableResponseEntity("Repository is not in service...", acceptHeader);
             }
 
-            if (!repository.allowsDirectoryBrowsing() || !probeForDirectoryListing(repositoryPath))
+            if (!repository.isAllowsDirectoryBrowsing() || !probeForDirectoryListing(repositoryPath))
             {
                 return getNotFoundResponseEntity("Requested repository doesn't allow browsing.", acceptHeader);
             }

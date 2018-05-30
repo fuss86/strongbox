@@ -7,6 +7,7 @@ import org.carlspring.strongbox.providers.ProviderImplementationException;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.services.ArtifactMetadataService;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.MavenRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryTypeEnum;
@@ -111,7 +112,7 @@ public class MavenGroupRepositoryProviderTest
         MavenRepositoryConfiguration mavenRepositoryConfiguration = new MavenRepositoryConfiguration();
         mavenRepositoryConfiguration.setIndexingEnabled(false);
 
-        Repository repositoryGroup = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_GROUP);
+        Repository repositoryGroup = mavenRepositoryFactory.createRepository(REPOSITORY_GROUP);
         repositoryGroup.setType(RepositoryTypeEnum.GROUP.getType());
         repositoryGroup.setAllowsRedeployment(false);
         repositoryGroup.setAllowsDelete(false);
@@ -120,9 +121,9 @@ public class MavenGroupRepositoryProviderTest
         repositoryGroup.addRepositoryToGroup(REPOSITORY_RELEASES_1);
         repositoryGroup.addRepositoryToGroup(REPOSITORY_RELEASES_2);
 
-        createRepository(repositoryGroup);
+        createRepository(repositoryGroup, STORAGE0);
 
-        Repository repositoryWithNestedGroupLevel1 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_GROUP_WITH_NESTED_GROUP_1);
+        Repository repositoryWithNestedGroupLevel1 = mavenRepositoryFactory.createRepository(REPOSITORY_GROUP_WITH_NESTED_GROUP_1);
         repositoryWithNestedGroupLevel1.setType(RepositoryTypeEnum.GROUP.getType());
         repositoryWithNestedGroupLevel1.setAllowsRedeployment(false);
         repositoryWithNestedGroupLevel1.setAllowsDelete(false);
@@ -130,9 +131,9 @@ public class MavenGroupRepositoryProviderTest
         repositoryWithNestedGroupLevel1.setRepositoryConfiguration(mavenRepositoryConfiguration);
         repositoryWithNestedGroupLevel1.addRepositoryToGroup(REPOSITORY_GROUP);
 
-        createRepository(repositoryWithNestedGroupLevel1);
+        createRepository(repositoryWithNestedGroupLevel1, STORAGE0);
 
-        Repository repositoryWithNestedGroupLevel2 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_GROUP_WITH_NESTED_GROUP_2);
+        Repository repositoryWithNestedGroupLevel2 = mavenRepositoryFactory.createRepository(REPOSITORY_GROUP_WITH_NESTED_GROUP_2);
         repositoryWithNestedGroupLevel2.setType(RepositoryTypeEnum.GROUP.getType());
         repositoryWithNestedGroupLevel2.setAllowsRedeployment(false);
         repositoryWithNestedGroupLevel2.setAllowsDelete(false);
@@ -140,7 +141,7 @@ public class MavenGroupRepositoryProviderTest
         repositoryWithNestedGroupLevel2.setRepositoryConfiguration(mavenRepositoryConfiguration);
         repositoryWithNestedGroupLevel2.addRepositoryToGroup(REPOSITORY_GROUP_WITH_NESTED_GROUP_1);
 
-        createRepository(repositoryWithNestedGroupLevel2);
+        createRepository(repositoryWithNestedGroupLevel2, STORAGE0);
 
         generateArtifact(getRepositoryBasedir(STORAGE0, REPOSITORY_RELEASES_2).getAbsolutePath(),
                          "org.carlspring.metadata.by.juan:juancho:1.2.64");
@@ -274,10 +275,10 @@ public class MavenGroupRepositoryProviderTest
     public void tearDown()
             throws Exception
     {
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_RELEASES_1);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_RELEASES_1);
         if (!repository.isInService())
         {
-            repository.putInService();
+            configurationManagementService.putInService(STORAGE0, REPOSITORY_RELEASES_1);
         }
     }
 
@@ -290,7 +291,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group includes...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0, REPOSITORY_GROUP,
@@ -315,7 +316,7 @@ public class MavenGroupRepositoryProviderTest
     public void mavenMetadataFileShouldBeFetchedFromGroupPathRepository()
             throws Exception
     {
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0, REPOSITORY_GROUP,
@@ -340,11 +341,9 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group includes with out of service repository...");
 
-        Configuration configuration = configurationManagementService.getConfiguration();
-        configuration.getStorage(STORAGE0).getRepository(REPOSITORY_RELEASES_2).putOutOfService();
-        configurationManagementService.save(configuration);
+        configurationManagementService.putOutOfService(STORAGE0, REPOSITORY_RELEASES_2);
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,
@@ -352,9 +351,7 @@ public class MavenGroupRepositoryProviderTest
                                                                                           "com/artifacts/in/releases/two/foo/1.2.4/foo-1.2.4.jar"));
         try (InputStream is = repositoryProvider.getInputStream(repositoryPath))
         {
-            configuration = configurationManagementService.getConfiguration();
-            configuration.getStorage(STORAGE0).getRepository(REPOSITORY_RELEASES_2).putInService();
-            configurationManagementService.save(configuration);
+            configurationManagementService.putInService(STORAGE0, REPOSITORY_RELEASES_2);
 
             assertNull(is);
         }
@@ -369,7 +366,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group includes with wildcard...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,
@@ -390,7 +387,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group includes with wildcard against nested repositories...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP_WITH_NESTED_GROUP_1);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP_WITH_NESTED_GROUP_1);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,
@@ -411,7 +408,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group includes with wildcard against nested repositories...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP_WITH_NESTED_GROUP_2);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP_WITH_NESTED_GROUP_2);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,
@@ -432,7 +429,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group excludes...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,
@@ -453,7 +450,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group excludes with wildcard...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         try (InputStream is = repositoryProvider.getInputStream(repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,
@@ -479,7 +476,7 @@ public class MavenGroupRepositoryProviderTest
     {
         System.out.println("# Testing group includes...");
 
-        Repository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0 + ":" + REPOSITORY_GROUP);
         RepositoryProvider repositoryProvider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Path repositoryPath = repositoryProvider.fetchPath(repositoryPathResolver.resolve(STORAGE0,

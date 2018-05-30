@@ -8,6 +8,7 @@ import org.carlspring.strongbox.providers.repository.group.GroupRepositoryArtifa
 import org.carlspring.strongbox.providers.repository.group.GroupRepositorySetCollector;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.services.support.ArtifactRoutingRulesChecker;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -55,9 +56,10 @@ public abstract class BaseMavenGroupRepositoryComponent
                                          final Map<String, MutableBoolean> repositoryArtifactExistence)
             throws IOException
     {
-        Repository repository = repositoryPath.getRepository();
-        final List<Repository> directParents = configurationManagementService.getGroupRepositoriesContaining(repository.getStorage().getId(),
-                                                                                                             repository.getId());
+        ImmutableRepository repository = repositoryPath.getRepository();
+        final List<ImmutableRepository> directParents = configurationManagementService.getConfiguration()
+                                                                                      .getGroupRepositoriesContaining(repository.getStorage().getId(),
+                                                                                                                      repository.getId());
         if (CollectionUtils.isEmpty(directParents))
         {
             return;
@@ -65,7 +67,7 @@ public abstract class BaseMavenGroupRepositoryComponent
         
         String artifactPath = RepositoryFiles.stringValue(repositoryPath);
         
-        for (final Repository groupRepository : directParents)
+        for (final ImmutableRepository groupRepository : directParents)
         {
 
             boolean artifactExists = groupRepositoryArtifactExistenceChecker.artifactExistsInTheGroupRepositorySubTree(
@@ -84,7 +86,7 @@ public abstract class BaseMavenGroupRepositoryComponent
         }
     }
 
-    protected abstract void cleanupGroupWhenArtifactPathNoLongerExistsInSubTree(Repository groupRepository,
+    protected abstract void cleanupGroupWhenArtifactPathNoLongerExistsInSubTree(ImmutableRepository groupRepository,
                                                                                 String artifactPath)
             throws IOException;
 
@@ -104,24 +106,25 @@ public abstract class BaseMavenGroupRepositoryComponent
         }
 
 
-        Repository repository = repositoryPath.getRepository();
+        ImmutableRepository repository = repositoryPath.getRepository();
         updateGroupsContaining(repositoryPath, Lists.newArrayList(repository), updateCallback);
     }
 
     private void updateGroupsContaining(RepositoryPath repositoryPath,
-                                        final List<Repository> leafRoute,
+                                        final List<ImmutableRepository> leafRoute,
                                         final UpdateCallback updateCallback)
             throws IOException
     {
-        Repository repository = repositoryPath.getRepository();
-        final List<Repository> groupRepositories = configurationManagementService.getGroupRepositoriesContaining(
-                repository.getStorage().getId(), repository.getId());
+        ImmutableRepository repository = repositoryPath.getRepository();
+        final List<ImmutableRepository> groupRepositories = configurationManagementService.getConfiguration()
+                                                                                 .getGroupRepositoriesContaining(repository.getStorage().getId(),
+                                                                                                                 repository.getId());
         if (CollectionUtils.isEmpty(groupRepositories))
         {
             return;
         }
         String artifactPath = RepositoryFiles.stringValue(repositoryPath);
-        for (final Repository parent : groupRepositories)
+        for (final ImmutableRepository parent : groupRepositories)
         {
             RepositoryPath parentRepositoryAbsolutePath = getRepositoryPath(parent);
             RepositoryPath parentRepositoryArtifactAbsolutePath = parentRepositoryAbsolutePath.resolve(artifactPath);
@@ -139,22 +142,22 @@ public abstract class BaseMavenGroupRepositoryComponent
         }
     }
 
-    protected RepositoryPath getRepositoryPath(final Repository repository)
+    protected RepositoryPath getRepositoryPath(final ImmutableRepository repository)
     {
         final LayoutProvider layoutProvider = getRepositoryProvider(repository);
         return layoutProvider.resolve(repository);
     }
 
-    protected LayoutProvider getRepositoryProvider(final Repository repository)
+    protected LayoutProvider getRepositoryProvider(final ImmutableRepository repository)
     {
         return layoutProviderRegistry.getProvider(repository.getLayout());
     }
 
-    protected boolean isOperationDeniedByRoutingRules(final Repository groupRepository,
-                                                      final List<Repository> leafRoute,
+    protected boolean isOperationDeniedByRoutingRules(final ImmutableRepository groupRepository,
+                                                      final List<ImmutableRepository> leafRoute,
                                                       final String artifactPath) throws IOException
     {
-        for (final Repository leaf : leafRoute)
+        for (final ImmutableRepository leaf : leafRoute)
         {
             LayoutProvider provider = layoutProviderRegistry.getProvider(leaf.getLayout());
             RepositoryPath repositoryPath = provider.resolve(leaf).resolve(artifactPath);
@@ -168,7 +171,7 @@ public abstract class BaseMavenGroupRepositoryComponent
 
     protected abstract UpdateCallback newInstance(RepositoryPath repositoryPath);
 
-    protected Repository getRepository(final String storageId,
+    protected ImmutableRepository getRepository(final String storageId,
                                        final String repositoryId)
     {
         return configurationManagementService.getConfiguration()

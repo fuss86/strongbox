@@ -8,6 +8,7 @@ import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.layout.NpmLayoutProvider;
 import org.carlspring.strongbox.services.ArtifactManagementService;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidationException;
 
@@ -96,7 +97,7 @@ public class NpmArtifactController extends BaseArtifactController
                          HttpServletResponse response)
         throws Exception
     {
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
         RepositoryPath path = npmLayoutProvider.resolve(repository, URI.create(resource));
         
         provideArtifactDownloadResponse(request, response, httpHeaders, repository, RepositoryFiles.stringValue(path));
@@ -127,7 +128,7 @@ public class NpmArtifactController extends BaseArtifactController
         Package packageJson = packageEntry.getValue0();
         Path packageTgz = packageEntry.getValue1();
 
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
         NpmArtifactCoordinates coordinates = NpmArtifactCoordinates.of(name, packageJson.getVersion());
 
         storeNpmPackage(repository, coordinates, packageJson, packageTgz);
@@ -135,7 +136,7 @@ public class NpmArtifactController extends BaseArtifactController
         return ResponseEntity.ok("");
     }
 
-    private void storeNpmPackage(Repository repository,
+    private void storeNpmPackage(ImmutableRepository repository,
                                  NpmArtifactCoordinates coordinates,
                                  Package packageDef,
                                  Path packageTgzTmp)

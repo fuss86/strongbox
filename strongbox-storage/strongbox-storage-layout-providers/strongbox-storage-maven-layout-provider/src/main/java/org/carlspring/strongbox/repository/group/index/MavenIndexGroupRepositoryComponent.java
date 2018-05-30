@@ -12,6 +12,7 @@ import org.carlspring.strongbox.services.ArtifactIndexesService;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.util.IndexContextHelper;
 
@@ -39,18 +40,18 @@ public class MavenIndexGroupRepositoryComponent
     @Inject
     private RepositoryIndexManager repositoryIndexManager;
 
-    public void rebuildIndex(final Repository groupRepository)
+    public void rebuildIndex(final ImmutableRepository groupRepository)
             throws IOException
     {
         rebuildIndex(groupRepository, null);
     }
 
-    public void rebuildIndex(final Repository groupRepository,
+    public void rebuildIndex(final ImmutableRepository groupRepository,
                              final String artifactPath)
             throws IOException
     {
-        final Set<Repository> traversedSubRepositories = groupRepositorySetCollector.collect(groupRepository, true);
-        for (final Repository subRepository : traversedSubRepositories)
+        final Set<ImmutableRepository> traversedSubRepositories = groupRepositorySetCollector.collect(groupRepository, true);
+        for (final ImmutableRepository subRepository : traversedSubRepositories)
         {
             if (!subRepository.isGroupRepository())
             {
@@ -72,7 +73,7 @@ public class MavenIndexGroupRepositoryComponent
     }
 
     @Override
-    protected void cleanupGroupWhenArtifactPathNoLongerExistsInSubTree(Repository groupRepository,
+    protected void cleanupGroupWhenArtifactPathNoLongerExistsInSubTree(ImmutableRepository groupRepository,
                                                                        String artifactPath)
             throws IOException
     {
@@ -111,7 +112,7 @@ public class MavenIndexGroupRepositoryComponent
         {
             final RepositoryPath artifactAbsolutePath = initiatorRepositoryPath.toAbsolutePath();
 
-            final Repository parent = parentRepositoryArtifactAbsolutePath.getFileSystem().getRepository();
+            final ImmutableRepository parent = parentRepositoryArtifactAbsolutePath.getFileSystem().getRepository();
             final String contextId = IndexContextHelper.getContextId(parent.getStorage().getId(), parent.getId(),
                                                                      IndexTypeEnum.LOCAL.getType());
             final RepositoryIndexer indexer = repositoryIndexManager.getRepositoryIndexer(contextId);

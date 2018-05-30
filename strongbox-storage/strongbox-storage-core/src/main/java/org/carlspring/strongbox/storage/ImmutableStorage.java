@@ -33,7 +33,7 @@ public class ImmutableStorage
     private Map<String, ImmutableRepository> immuteRepositories(final Map<String, Repository> source)
     {
         return source != null ? ImmutableMap.copyOf(source.entrySet().stream().collect(
-                toMap(Map.Entry::getKey, e -> new ImmutableRepository(e.getValue())))) : Collections.emptyMap();
+                toMap(Map.Entry::getKey, e -> new ImmutableRepository(e.getValue(), this)))) : Collections.emptyMap();
     }
 
     public ImmutableRepository getRepository(final String repositoryId)

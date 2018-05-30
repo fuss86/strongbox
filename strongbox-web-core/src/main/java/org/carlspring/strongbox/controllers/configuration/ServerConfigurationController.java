@@ -78,9 +78,9 @@ public class ServerConfigurationController
                              MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getInstanceName(@RequestHeader(HttpHeaders.ACCEPT) String accept)
     {
-        if (configurationManagementService.getInstanceName() != null)
+        if (configurationManagementService.getConfiguration().getInstanceName() != null)
         {
-            return ResponseEntity.ok(getInstanceNameEntityBody(configurationManagementService.getInstanceName(),
+            return ResponseEntity.ok(getInstanceNameEntityBody(configurationManagementService.getConfiguration().getInstanceName(),
                                                                accept));
         }
         else
@@ -132,9 +132,9 @@ public class ServerConfigurationController
                              MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getBaseUrl(@RequestHeader(HttpHeaders.ACCEPT) String accept)
     {
-        if (configurationManagementService.getBaseUrl() != null)
+        if (configurationManagementService.getConfiguration().getBaseUrl() != null)
         {
-            return ResponseEntity.ok(getBaseUrlEntityBody(configurationManagementService.getBaseUrl(), accept));
+            return ResponseEntity.ok(getBaseUrlEntityBody(configurationManagementService.getConfiguration().getBaseUrl(), accept));
         }
         else
         {
@@ -195,7 +195,7 @@ public class ServerConfigurationController
                              MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getPort(@RequestHeader(HttpHeaders.ACCEPT) String accept)
     {
-        return ResponseEntity.ok(getPortEntityBody(configurationManagementService.getPort(), accept));
+        return ResponseEntity.ok(getPortEntityBody(configurationManagementService.getConfiguration().getPort(), accept));
     }
 
     @ApiOperation(value = "Sets the server settings of the service.")

@@ -250,11 +250,11 @@ public class MavenArtifactControllerTest
         MavenRepositoryConfiguration mavenRepositoryConfiguration = new MavenRepositoryConfiguration();
         mavenRepositoryConfiguration.setIndexingEnabled(true);
 
-        Repository repository1 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES1);
+        Repository repository1 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES1);
         repository1.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository1.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository1);
+        createRepository(repository1, STORAGE0);
 
         // Generate releases
         // Used by testPartialFetch():
@@ -302,17 +302,17 @@ public class MavenArtifactControllerTest
                          }
         );
 
-        Repository repository2 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES2);
+        Repository repository2 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES2);
         repository2.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository2.setRepositoryConfiguration(mavenRepositoryConfiguration);
         repository2.setAllowsRedeployment(true);
 
-        createRepository(repository2);
+        createRepository(repository2, STORAGE0);
 
-        Repository repository3 = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_SNAPSHOTS);
+        Repository repository3 = mavenRepositoryFactory.createRepository(REPOSITORY_SNAPSHOTS);
         repository3.setPolicy(RepositoryPolicyEnum.SNAPSHOT.getPolicy());
 
-        createRepository(repository3);
+        createRepository(repository3, STORAGE0);
 
         //noinspection ResultOfMethodCallIgnored
         new File(TEST_RESOURCES).mkdirs();

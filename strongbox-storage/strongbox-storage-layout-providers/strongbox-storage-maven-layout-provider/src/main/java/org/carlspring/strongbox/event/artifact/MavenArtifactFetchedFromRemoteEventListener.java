@@ -9,9 +9,11 @@ import org.carlspring.strongbox.providers.repository.proxied.LocalStorageProxyRe
 import org.carlspring.strongbox.providers.repository.proxied.ProxyRepositoryArtifactResolver;
 import org.carlspring.strongbox.providers.repository.proxied.SimpleProxyRepositoryArtifactResolver;
 import org.carlspring.strongbox.resource.ResourceCloser;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.metadata.MetadataHelper;
 import org.carlspring.strongbox.storage.metadata.MetadataType;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -43,7 +45,7 @@ public class MavenArtifactFetchedFromRemoteEventListener
     @Override
     public void handle(final ArtifactEvent<RepositoryPath> event)
     {
-        final Repository repository = getRepository(event);
+        final ImmutableRepository repository = getRepository(event);
 
         if (!Maven2LayoutProvider.ALIAS.equals(repository.getLayout()))
         {
@@ -103,8 +105,8 @@ public class MavenArtifactFetchedFromRemoteEventListener
     {
 
         final MutableObject<Exception> operationException = new MutableObject<>();
-        final Repository repository = artifactAbsolutePath.getFileSystem().getRepository();
-        final Storage storage = repository.getStorage();
+        final ImmutableRepository repository = artifactAbsolutePath.getFileSystem().getRepository();
+        final ImmutableStorage storage = repository.getStorage();
         
         getMetadataInputStreamWithCallback(simpleProxyRepositoryArtifactResolver, metadataRelativePath, is ->
         {

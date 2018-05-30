@@ -59,32 +59,29 @@ public class ArtifactCoordinateValidatorsManagementControllerTest
     {
         super.init();
 
-        Repository repository1 = mavenRepositoryFactory.createRepository(STORAGE0, "releases-with-single-validator");
+        Repository repository1 = mavenRepositoryFactory.createRepository("releases-with-single-validator");
         repository1.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
-        repository1.setStorage(configurationManager.getConfiguration().getStorage(STORAGE0));
         repository1.setArtifactCoordinateValidators(
                 new LinkedHashSet<>(Collections.singletonList(redeploymentValidator.getAlias())));
 
-        createRepository(repository1);
+        createRepository(repository1, STORAGE0);
 
-        Repository repository2 = mavenRepositoryFactory.createRepository(STORAGE0, "releases-with-default-validators");
+        Repository repository2 = mavenRepositoryFactory.createRepository("releases-with-default-validators");
         repository2.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
 
-        createRepository(repository2);
+        createRepository(repository2, STORAGE0);
 
-        Repository repository3 = mavenRepositoryFactory.createRepository(STORAGE0,
-                                                                         "another-releases-with-default-validators");
+        Repository repository3 = mavenRepositoryFactory.createRepository("another-releases-with-default-validators");
         repository3.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
 
-        createRepository(repository3);
+        createRepository(repository3, STORAGE0);
 
-        Repository repository4 = mavenRepositoryFactory.createRepository(STORAGE0,
-                                                                         "single-validator-only");
+        Repository repository4 = mavenRepositoryFactory.createRepository("single-validator-only");
         repository4.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository4.setArtifactCoordinateValidators(
                 new LinkedHashSet<>(Collections.singletonList(redeploymentValidator.getAlias())));
 
-        createRepository(repository4);
+        createRepository(repository4, STORAGE0);
 
         setContextBaseUrl(getContextBaseUrl() + "/api/configuration/artifact-coordinate-validators");
     }

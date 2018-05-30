@@ -4,6 +4,7 @@ import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationFileManager;
 import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.configuration.ProxyConfiguration;
+import org.carlspring.strongbox.configuration.RemoteRepositoryRetryArtifactDownloadConfiguration;
 import org.carlspring.strongbox.event.repository.RepositoryEvent;
 import org.carlspring.strongbox.event.repository.RepositoryEventListenerRegistry;
 import org.carlspring.strongbox.event.repository.RepositoryEventTypeEnum;
@@ -84,7 +85,7 @@ public class ConfigurationManagementServiceImpl
     @Override
     public void setConfiguration(Configuration newConf)
     {
-        Objects.requireNonNull(configuration, "Configuration cannot be null");
+        Objects.requireNonNull(newConf, "Configuration cannot be null");
 
         modifyInLock(configuration ->
                      {
@@ -149,7 +150,12 @@ public class ConfigurationManagementServiceImpl
     public void saveRepository(String storageId,
                                Repository repository)
     {
-        modifyInLock(configuration -> configuration.getStorage(storageId).addRepository(repository));
+        modifyInLock(configuration ->
+                     {
+                         final Storage storage = configuration.getStorage(storageId);
+                         repository.setStorage(storage);
+                         storage.addRepository(repository);
+                     });
     }
 
     @Override
@@ -477,6 +483,43 @@ public class ConfigurationManagementServiceImpl
                                       .getRepository(repositoryId)
                                       .setArtifactMaxSize(value);
                      });
+    }
+
+    @Override
+    public void set(final RemoteRepositoryRetryArtifactDownloadConfiguration remoteRepositoryRetryArtifactDownloadConfiguration)
+    {
+        modifyInLock(configuration ->
+                     {
+                         configuration.getRemoteRepositoriesConfiguration()
+                                      .setRemoteRepositoryRetryArtifactDownloadConfiguration(remoteRepositoryRetryArtifactDownloadConfiguration);
+                     });
+    }
+
+    @Override
+    public void addRepositoryArtifactCoordinateValidator(final String storageId,
+                                                         final String repositoryId,
+                                                         final String alias)
+    {
+        modifyInLock(configuration ->
+                     {
+                         configuration.getStorage(storageId).getRepository(
+                                 repositoryId).getArtifactCoordinateValidators().put(alias, alias);
+                     });
+    }
+
+    @Override
+    public boolean removeRepositoryArtifactCoordinateValidator(final String storageId,
+                                                               final String repositoryId,
+                                                               final String alias)
+    {
+        final MutableBoolean result = new MutableBoolean();
+        modifyInLock(configuration ->
+                     {
+                         result.setValue(configuration.getStorage(storageId).getRepository(
+                                 repositoryId).getArtifactCoordinateValidators().remove(alias, alias));
+                     });
+
+        return result.isTrue();
     }
 
     private void setProxyRepositoryConnectionPoolConfigurations()

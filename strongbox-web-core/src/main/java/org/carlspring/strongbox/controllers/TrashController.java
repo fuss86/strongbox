@@ -6,6 +6,7 @@ import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.providers.io.RepositoryTrashPathResolver;
 import org.carlspring.strongbox.services.RepositoryManagementService;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -151,7 +152,7 @@ public class TrashController
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .body(getResponseEntityBody("The specified storageId does not exist!", accept));
         }
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
         if (repository == null)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -3,6 +3,7 @@ package org.carlspring.strongbox.controllers.configuration;
 import org.carlspring.strongbox.forms.storage.routing.RoutingRuleForm;
 import org.carlspring.strongbox.forms.storage.routing.RuleSetForm;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
+import org.carlspring.strongbox.storage.routing.ImmutableRoutingRules;
 import org.carlspring.strongbox.storage.routing.RoutingRule;
 import org.carlspring.strongbox.storage.routing.RoutingRules;
 import org.carlspring.strongbox.storage.routing.RuleSet;
@@ -69,7 +70,7 @@ public class RoutingConfigurationController
                 produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getRoutingRules()
     {
-        RoutingRules body = configurationManagementService.getRoutingRules();
+        ImmutableRoutingRules body = configurationManagementService.getConfiguration().getRoutingRules();
         return ResponseEntity.ok(body);
     }
 

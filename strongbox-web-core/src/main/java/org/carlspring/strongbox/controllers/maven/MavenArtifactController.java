@@ -3,7 +3,9 @@ package org.carlspring.strongbox.controllers.maven;
 import org.carlspring.strongbox.controllers.BaseArtifactController;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.storage.ArtifactStorageException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +102,7 @@ public class MavenArtifactController
     {
         logger.debug("Requested /" + storageId + "/" + repositoryId + "/" + path + ".");
 
-        Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             logger.error("Unable to find storage by ID " + storageId);
@@ -110,7 +112,7 @@ public class MavenArtifactController
             return;
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             logger.error("Unable to find repository by ID " + repositoryId + " for storage " + storageId);
@@ -155,25 +157,25 @@ public class MavenArtifactController
 
         try
         {
-            final Storage srcStorage = getStorage(srcStorageId);
+            final ImmutableStorage srcStorage = getStorage(srcStorageId);
             if (srcStorage == null)
             {
                 return ResponseEntity.status(NOT_FOUND)
                                      .body("The source storageId does not exist!");
             }
-            final Storage destStorage = getStorage(destStorageId);
+            final ImmutableStorage destStorage = getStorage(destStorageId);
             if (destStorage == null)
             {
                 return ResponseEntity.status(NOT_FOUND)
                                      .body("The destination storageId does not exist!");
             }
-            final Repository srcRepository = srcStorage.getRepository(srcRepositoryId);
+            final ImmutableRepository srcRepository = srcStorage.getRepository(srcRepositoryId);
             if (srcRepository == null)
             {
                 return ResponseEntity.status(NOT_FOUND)
                                      .body("The source repositoryId does not exist!");
             }
-            final Repository destRepository = destStorage.getRepository(destRepositoryId);
+            final ImmutableRepository destRepository = destStorage.getRepository(destRepositoryId);
             if (destRepository == null)
             {
                 return ResponseEntity.status(NOT_FOUND)
@@ -231,13 +233,13 @@ public class MavenArtifactController
 
         try
         {
-            final Storage storage = getStorage(storageId);
+            final ImmutableStorage storage = getStorage(storageId);
             if (storage == null)
             {
                 return ResponseEntity.status(NOT_FOUND)
                                      .body("The specified storageId does not exist!");
             }
-            final Repository repository = storage.getRepository(repositoryId);
+            final ImmutableRepository repository = storage.getRepository(repositoryId);
             if (repository == null)
             {
                 return ResponseEntity.status(NOT_FOUND)
@@ -267,7 +269,7 @@ public class MavenArtifactController
     protected boolean provideArtifactDownloadResponse(final HttpServletRequest request,
                                                       final HttpServletResponse response,
                                                       final HttpHeaders httpHeaders,
-                                                      final Repository repository,
+                                                      final ImmutableRepository repository,
                                                       final String requestedPath)
             throws Exception
     {

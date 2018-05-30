@@ -114,11 +114,11 @@ public class RawRestAssuredBaseTest
         RemoteRepository remoteRepository = new RemoteRepository();
         remoteRepository.setUrl(remoteRepositoryUrl);
 
-        Repository repository = rawRepositoryFactory.createRepository(storageId, repositoryId);
+        Repository repository = rawRepositoryFactory.createRepository(repositoryId);
         repository.setType(RepositoryTypeEnum.PROXY.getType());
         repository.setRemoteRepository(remoteRepository);
 
-        createRepository(repository);
+        createRepository(repository, storageId);
     }
 
     protected void resolveArtifact(String artifactPath)

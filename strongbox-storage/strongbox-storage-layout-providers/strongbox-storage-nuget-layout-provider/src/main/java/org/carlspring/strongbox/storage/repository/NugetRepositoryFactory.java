@@ -18,26 +18,17 @@ public class NugetRepositoryFactory
 {
 
     @Inject
-    private ConfigurationManager configurationManager;
-
-    @Inject
     private NugetRepositoryFeatures nugetRepositoryFeatures;
 
 
     @Override
-    public Repository createRepository(String storageId, String repositoryId)
+    public Repository createRepository(String repositoryId)
     {
         Repository repository = new Repository(repositoryId);
-        repository.setStorage(getConfiguration().getStorage(storageId));
         repository.setLayout(NugetLayoutProvider.ALIAS);
         repository.setArtifactCoordinateValidators(nugetRepositoryFeatures.getDefaultArtifactCoordinateValidators());
 
         return repository;
-    }
-
-    public Configuration getConfiguration()
-    {
-        return configurationManager.getConfiguration();
     }
 
 }

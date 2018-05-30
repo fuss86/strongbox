@@ -15,6 +15,7 @@ import org.carlspring.strongbox.config.Maven2LayoutProviderTestConfig;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.repository.IndexedMavenRepositoryFeatures;
 import org.carlspring.strongbox.repository.MavenRepositoryFeatures;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
 import org.junit.After;
@@ -91,7 +92,7 @@ public class Maven2ProxyRepositoryTest
         // Make sure the repository that is being proxied has a packed index to serve:
         features.pack(STORAGE0, REPOSITORY_RELEASES);
 
-        Repository repositoryReleases = configurationManager.getRepository(STORAGE0, REPOSITORY_RELEASES);
+        ImmutableRepository repositoryReleases = configurationManager.getRepository(STORAGE0, REPOSITORY_RELEASES);
         File indexPropertiesFile = new File(repositoryReleases.getBasedir(),
                                             ".index/local/nexus-maven-repository-index.properties");
 
@@ -102,7 +103,7 @@ public class Maven2ProxyRepositoryTest
         // Download the remote index for the proxy repository
         features.downloadRemoteIndex(STORAGE0, REPOSITORY_PROXY);
 
-        Repository repositoryProxiedReleases = configurationManager.getRepository(STORAGE0, REPOSITORY_PROXY);
+        ImmutableRepository repositoryProxiedReleases = configurationManager.getRepository(STORAGE0, REPOSITORY_PROXY);
         File indexPropertiesUpdaterFile = new File(repositoryProxiedReleases.getBasedir(),
                                                    ".index/remote/nexus-maven-repository-index-updater.properties");
 

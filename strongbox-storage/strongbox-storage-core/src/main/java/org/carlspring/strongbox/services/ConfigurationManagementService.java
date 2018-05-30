@@ -3,6 +3,7 @@ package org.carlspring.strongbox.services;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.configuration.ProxyConfiguration;
+import org.carlspring.strongbox.configuration.RemoteRepositoryRetryArtifactDownloadConfiguration;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
@@ -77,4 +78,14 @@ public interface ConfigurationManagementService
     void setArtifactMaxSize(String storageId,
                             String repositoryId,
                             long value);
+
+    void set(RemoteRepositoryRetryArtifactDownloadConfiguration remoteRepositoryRetryArtifactDownloadConfiguration);
+
+    void addRepositoryArtifactCoordinateValidator(String storageId,
+                                                  String repositoryId,
+                                                  String alias);
+
+    boolean removeRepositoryArtifactCoordinateValidator(String storageId,
+                                                     String repositoryId,
+                                                     String alias);
 }

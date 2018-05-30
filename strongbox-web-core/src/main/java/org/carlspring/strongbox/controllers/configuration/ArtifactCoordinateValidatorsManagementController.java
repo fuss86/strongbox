@@ -1,9 +1,11 @@
 package org.carlspring.strongbox.controllers.configuration;
 
-import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.controllers.BaseController;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.validation.ArtifactCoordinatesValidator;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidatorRegistry;
@@ -72,13 +74,13 @@ public class ArtifactCoordinateValidatorsManagementController
                                                                @PathVariable String repositoryId,
                                                                @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader)
     {
-        Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             return getNotFoundResponseEntity(NOT_FOUND_STORAGE_MESSAGE, acceptHeader);
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             return getNotFoundResponseEntity(NOT_FOUND_REPOSITORY_MESSAGE, acceptHeader);
@@ -104,21 +106,19 @@ public class ArtifactCoordinateValidatorsManagementController
                               @PathVariable String alias,
                               @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader)
     {
-        Configuration configuration = configurationManager.getConfiguration();
-        Storage storage = configuration.getStorage(storageId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             return getNotFoundResponseEntity(NOT_FOUND_STORAGE_MESSAGE, acceptHeader);
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             return getNotFoundResponseEntity(NOT_FOUND_REPOSITORY_MESSAGE, acceptHeader);
         }
 
-        repository.getArtifactCoordinateValidators().put(alias, alias);
-        configurationManagementService.save(configuration);
+        configurationManagementService.addRepositoryArtifactCoordinateValidator(storageId, repositoryId, alias);
 
         return getSuccessfulResponseEntity(SUCCESSFUL_ADD, acceptHeader);
     }
@@ -133,26 +133,27 @@ public class ArtifactCoordinateValidatorsManagementController
                                  @PathVariable String alias,
                                  @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader)
     {
-        Configuration configuration = configurationManager.getConfiguration();
-        Storage storage = configuration.getStorage(storageId);
+        ImmutableConfiguration configuration = configurationManager.getConfiguration();
+        ImmutableStorage storage = configuration.getStorage(storageId);
         if (storage == null)
         {
             return getNotFoundResponseEntity(NOT_FOUND_STORAGE_MESSAGE, acceptHeader);
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             return getNotFoundResponseEntity(NOT_FOUND_REPOSITORY_MESSAGE, acceptHeader);
         }
 
-        boolean resultOk = repository.getArtifactCoordinateValidators().remove(alias, alias);
+        boolean resultOk = configurationManagementService.removeRepositoryArtifactCoordinateValidator(storageId,
+                                                                                                      repositoryId,
+                                                                                                      alias);
         if (!resultOk)
         {
             return getNotFoundResponseEntity(NOT_FOUND_ALIAS_MESSAGE, acceptHeader);
         }
 
-        configurationManagementService.save(configuration);
         return getSuccessfulResponseEntity(SUCCESSFUL_DELETE, acceptHeader);
     }
 

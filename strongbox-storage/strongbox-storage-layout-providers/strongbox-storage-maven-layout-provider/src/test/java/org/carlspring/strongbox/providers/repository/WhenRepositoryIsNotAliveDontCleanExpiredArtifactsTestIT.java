@@ -4,6 +4,7 @@ import org.carlspring.strongbox.client.ArtifactTransportException;
 import org.carlspring.strongbox.config.Maven2LayoutProviderCronTasksTestConfig;
 import org.carlspring.strongbox.domain.ArtifactEntry;
 import org.carlspring.strongbox.providers.ProviderImplementationException;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class WhenRepositoryIsNotAliveDontCleanExpiredArtifactsTestIT
         ArtifactEntry artifactEntry = downloadAndSaveArtifactEntry();
 
         // make repositories are not alive
-        Mockito.when(remoteRepositoryAlivenessCacheManager.isAlive(any(RemoteRepository.class))).thenReturn(false);
+        Mockito.when(remoteRepositoryAlivenessCacheManager.isAlive(any(ImmutableRemoteRepository.class))).thenReturn(false);
 
         localStorageProxyRepositoryExpiredArtifactsCleaner.cleanup(5, artifactEntry.getSizeInBytes() - 1);
         Optional<ArtifactEntry> artifactEntryOptional = artifactEntryService.findOneArtifact(storageId, repositoryId, path);

@@ -26,6 +26,7 @@ public class GenericReleaseVersionValidatorTest
     {
         Repository repository = new Repository("test-repository-for-nuget-release-validation");
         repository.setPolicy(RepositoryPolicyEnum.RELEASE.toString());
+        repository.setBasedir("");
         this.repository = new ImmutableRepository(repository);
     }
 

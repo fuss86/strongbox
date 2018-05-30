@@ -16,10 +16,12 @@ import org.carlspring.strongbox.repository.MavenRepositoryManagementStrategy;
 import org.carlspring.strongbox.services.ArtifactManagementService;
 import org.carlspring.strongbox.services.ArtifactMetadataService;
 import org.carlspring.strongbox.services.ArtifactSearchService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.metadata.MavenMetadataManager;
 import org.carlspring.strongbox.storage.metadata.MetadataHelper;
 import org.carlspring.strongbox.storage.metadata.MetadataType;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.search.SearchRequest;
 import org.carlspring.strongbox.storage.search.SearchResult;
@@ -136,8 +138,8 @@ public class Maven2LayoutProvider
     {
         logger.debug("Removing " + repositoryPath + "...");
 
-        Repository repository = repositoryPath.getRepository();
-        Storage storage = repository.getStorage();
+        ImmutableRepository repository = repositoryPath.getRepository();
+        ImmutableStorage storage = repository.getStorage();
         RepositoryPath repositoryPathRelative = repositoryPath.relativize();
         
         if (!Files.isDirectory(repositoryPath))
@@ -207,8 +209,8 @@ public class Maven2LayoutProvider
                                String repositoryId,
                                String path)
     {
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
 
         try
         {

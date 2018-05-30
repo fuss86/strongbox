@@ -63,11 +63,11 @@ public class NpmArtifactControllerTest extends NpmRepositoryTestCase
     {
         createStorage(STORAGE_ID);
 
-        Repository repository = npmRepositoryFactory.createRepository(STORAGE_ID, REPOSITORY_RELEASES_1);
+        Repository repository = npmRepositoryFactory.createRepository(REPOSITORY_RELEASES_1);
         repository.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository.setLayout(NpmLayoutProvider.ALIAS);
 
-        createRepository(repository);
+        createRepository(repository, STORAGE_ID);
     }
 
     @Test

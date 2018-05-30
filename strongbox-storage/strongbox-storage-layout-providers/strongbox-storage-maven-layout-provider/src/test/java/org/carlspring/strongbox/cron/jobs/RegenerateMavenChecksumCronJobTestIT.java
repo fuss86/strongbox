@@ -7,6 +7,7 @@ import org.carlspring.strongbox.cron.services.CronTaskConfigurationService;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryPolicyEnum;
 
@@ -392,7 +393,7 @@ public class RegenerateMavenChecksumCronJobTestIT
 
     private LayoutProvider getLayoutProvider(String repositoryId)
     {
-        Repository repository = configurationManager.getRepository(STORAGE0, repositoryId);
+        ImmutableRepository repository = configurationManager.getRepository(STORAGE0, repositoryId);
 
         return layoutProviderRegistry.getProvider(repository.getLayout());
     }

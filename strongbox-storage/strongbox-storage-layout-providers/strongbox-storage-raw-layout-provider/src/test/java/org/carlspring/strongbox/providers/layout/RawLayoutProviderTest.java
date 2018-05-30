@@ -3,6 +3,7 @@ package org.carlspring.strongbox.providers.layout;
 import org.carlspring.strongbox.artifact.coordinates.NullArtifactCoordinates;
 import org.carlspring.strongbox.config.RawLayoutProviderTestConfig;
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.data.PropertyUtils;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategyException;
@@ -60,7 +61,7 @@ public class RawLayoutProviderTest
     public void setUp()
             throws Exception
     {
-        Configuration configuration = configurationManagementService.getConfiguration();
+        ImmutableConfiguration configuration = configurationManagementService.getConfiguration();
 
         if (configuration.getStorage(STORAGE) == null)
         {
@@ -148,7 +149,6 @@ public class RawLayoutProviderTest
             throws IOException, JAXBException, RepositoryManagementStrategyException
     {
         Repository repository = new Repository(repositoryId);
-        repository.setStorage(configurationManagementService.getConfiguration().getStorage(storageId));
         repository.setLayout(RawLayoutProvider.ALIAS);
         repository.setArtifactCoordinateValidators(Collections.emptySet());
 

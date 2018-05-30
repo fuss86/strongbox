@@ -7,6 +7,7 @@ import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.repository.group.metadata.MavenMetadataGroupRepositoryComponent;
 import org.carlspring.strongbox.services.ArtifactMetadataService;
 import org.carlspring.strongbox.storage.metadata.MavenMetadataManager;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -39,7 +40,7 @@ abstract class BaseMavenArtifactEventListener
     @Inject
     MavenMetadataGroupRepositoryComponent mavenMetadataGroupRepositoryComponent;
 
-    Repository getRepository(final ArtifactEvent<RepositoryPath> event)
+    ImmutableRepository getRepository(final ArtifactEvent<RepositoryPath> event)
     {
         return event.getPath().getFileSystem().getRepository();
     }

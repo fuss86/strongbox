@@ -93,22 +93,22 @@ public class BaseMavenGroupRepositoryComponentTest
     }
 
     @Override
-    public void createRepository(final Repository repository)
+    public void createRepository(final Repository repository, final String storageId)
             throws RepositoryManagementStrategyException, JAXBException, IOException
     {
         MavenRepositoryConfiguration configuration = new MavenRepositoryConfiguration();
         configuration.setIndexingEnabled(true);
 
-        repository.setStorage(configurationManager.getConfiguration().getStorage(STORAGE0));
         repository.setLayout(Maven2LayoutProvider.ALIAS);
         repository.setAllowsForceDeletion(true);
         repository.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository.setRepositoryConfiguration(configuration);
 
-        super.createRepository(repository);
+        super.createRepository(repository, storageId);
     }
 
-    protected void createLeaf(String repositoryId)
+    protected void createLeaf(String repositoryId,
+                              String storageId)
             throws Exception
     {
         Repository repository = new Repository(repositoryId);
@@ -117,11 +117,12 @@ public class BaseMavenGroupRepositoryComponentTest
                            RepositoryTypeEnum.HOSTED.getType() :
                            RepositoryTypeEnum.PROXY.getType());
 
-        createRepository(repository);
+        createRepository(repository, storageId);
     }
 
     protected Repository createGroup(String repositoryId,
-                               String... leafs)
+                                     String storageId,
+                                     String... leafs)
             throws Exception
     {
         Repository repository = new Repository(repositoryId);
@@ -129,8 +130,8 @@ public class BaseMavenGroupRepositoryComponentTest
         repository.setType(RepositoryTypeEnum.GROUP.getType());
         repository.setGroupRepositories(Sets.newLinkedHashSet(Arrays.asList(leafs)));
 
-        createRepository(repository);
-        
+        createRepository(repository, storageId);
+
         return repository;
     }
 
@@ -138,18 +139,18 @@ public class BaseMavenGroupRepositoryComponentTest
     public void initialize()
             throws Exception
     {
-        createLeaf(REPOSITORY_LEAF_E);
-        createLeaf(REPOSITORY_LEAF_L);
-        createLeaf(REPOSITORY_LEAF_Z);
-        createLeaf(REPOSITORY_LEAF_D);
-        createLeaf(REPOSITORY_LEAF_G);
-        createLeaf(REPOSITORY_LEAF_K);
+        createLeaf(REPOSITORY_LEAF_E, STORAGE0);
+        createLeaf(REPOSITORY_LEAF_L, STORAGE0);
+        createLeaf(REPOSITORY_LEAF_Z, STORAGE0);
+        createLeaf(REPOSITORY_LEAF_D, STORAGE0);
+        createLeaf(REPOSITORY_LEAF_G, STORAGE0);
+        createLeaf(REPOSITORY_LEAF_K, STORAGE0);
 
-        createGroup(REPOSITORY_GROUP_C, REPOSITORY_LEAF_E, REPOSITORY_LEAF_Z);
-        createGroup(REPOSITORY_GROUP_B, REPOSITORY_GROUP_C, REPOSITORY_LEAF_D, REPOSITORY_LEAF_L);
-        createGroup(REPOSITORY_GROUP_A, REPOSITORY_LEAF_G, REPOSITORY_GROUP_B);
-        createGroup(REPOSITORY_GROUP_F, REPOSITORY_GROUP_C, REPOSITORY_LEAF_D, REPOSITORY_LEAF_L);
-        createGroup(REPOSITORY_GROUP_H, REPOSITORY_GROUP_F, REPOSITORY_LEAF_K);
+        createGroup(REPOSITORY_GROUP_C, STORAGE0, REPOSITORY_LEAF_E, REPOSITORY_LEAF_Z);
+        createGroup(REPOSITORY_GROUP_B, STORAGE0, REPOSITORY_GROUP_C, REPOSITORY_LEAF_D, REPOSITORY_LEAF_L);
+        createGroup(REPOSITORY_GROUP_A, STORAGE0, REPOSITORY_LEAF_G, REPOSITORY_GROUP_B);
+        createGroup(REPOSITORY_GROUP_F, STORAGE0, REPOSITORY_GROUP_C, REPOSITORY_LEAF_D, REPOSITORY_LEAF_L);
+        createGroup(REPOSITORY_GROUP_H, STORAGE0, REPOSITORY_GROUP_F, REPOSITORY_LEAF_K);
 
         // whenAnArtifactWasDeletedAllGroupRepositoriesContainingShouldHaveMetadataUpdatedIfPossible
         generateArtifact(REPOSITORY_LEAF_L_BASEDIR.getAbsolutePath(),

@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.carlspring.strongbox.authentication.api.impl.xml.SecurityTokenAuthentication;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.providers.layout.NugetLayoutProvider;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.users.security.SecurityTokenProvider;
 
@@ -66,13 +68,13 @@ public class NugetApiKeyAuthenticationSupplier implements AuthenticationSupplier
             return false;
         }
 
-        Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             return false;
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             return false;

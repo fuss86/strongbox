@@ -3,6 +3,7 @@ package org.carlspring.strongbox.storage.validation;
 import org.carlspring.strongbox.config.Maven2LayoutProviderTestConfig;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.storage.validation.deployment.RedeploymentValidator;
 import org.carlspring.strongbox.storage.validation.version.MavenReleaseVersionValidator;
 import org.carlspring.strongbox.storage.validation.version.MavenSnapshotVersionValidator;
@@ -48,7 +49,7 @@ public class DefaultMavenArtifactCoordinateValidatorsTest
     @Test
     public void testParseConfiguration()
     {
-        final Configuration configuration = configurationManager.getConfiguration();
+        final ImmutableConfiguration configuration = configurationManager.getConfiguration();
 
         assertNotNull(configuration);
         assertNotNull(configuration.getStorages());
@@ -73,7 +74,7 @@ public class DefaultMavenArtifactCoordinateValidatorsTest
                                 .get("storage0")
                                 .getRepositories()
                                 .get("releases")
-                                .allowsDirectoryBrowsing());
+                                .isAllowsDirectoryBrowsing());
 
         Set<String> versionValidators = configuration.getStorages()
                                                      .get("storage0")

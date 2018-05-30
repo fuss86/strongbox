@@ -345,21 +345,21 @@ public class RegenerateNugetChecksumCronJobTestIT
                    JAXBException,
                    RepositoryManagementStrategyException
     {
-        Repository repository = nugetRepositoryFactory.createRepository(storageId, repositoryId);
+        Repository repository = nugetRepositoryFactory.createRepository(repositoryId);
         repository.setPolicy(policy);
 
-        createRepository(repository);
+        createRepository(storageId, repository);
     }
 
-    private void createRepository(Repository repository)
+    private void createRepository(String storageId, Repository repository)
             throws IOException,
                    JAXBException,
                    RepositoryManagementStrategyException
     {
-        configurationManagementService.saveRepository(repository.getStorage().getId(), repository);
+        configurationManagementService.saveRepository(storageId, repository);
 
         // Create the repository
-        repositoryManagementService.createRepository(repository.getStorage().getId(), repository.getId());
+        repositoryManagementService.createRepository(storageId, repository.getId());
     }
 
     private void createStorage(String storageId)

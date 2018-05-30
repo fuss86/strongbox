@@ -10,7 +10,9 @@ import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
 
@@ -77,8 +79,8 @@ public class ArtifactOutputStreamTest
             throws IOException,
                    NoSuchAlgorithmException
     {
-        final Storage storage = getConfiguration().getStorage(STORAGE0);
-        final Repository repository = storage.getRepository(REPOSITORY_RELEASES);
+        final ImmutableStorage storage = getConfiguration().getStorage(STORAGE0);
+        final ImmutableRepository repository = storage.getRepository(REPOSITORY_RELEASES);
 
         final MavenArtifact artifact = MavenArtifactUtils.getArtifactFromGAVTC("org.carlspring.foo:temp-file-test:1.2.3:jar");
         final ArtifactCoordinates coordinates = new MavenArtifactCoordinates(artifact);
@@ -107,8 +109,8 @@ public class ArtifactOutputStreamTest
             throws IOException,
                    NoSuchAlgorithmException
     {
-        final Storage storage = getConfiguration().getStorage(STORAGE0);
-        final Repository repository = storage.getRepository(REPOSITORY_RELEASES);
+        final ImmutableStorage storage = getConfiguration().getStorage(STORAGE0);
+        final ImmutableRepository repository = storage.getRepository(REPOSITORY_RELEASES);
 
         final MavenArtifact artifact = MavenArtifactUtils.getArtifactFromGAVTC("org.carlspring.foo:temp-file-test:1.2.4:jar");
         final ArtifactCoordinates coordinates = new MavenArtifactCoordinates(artifact);

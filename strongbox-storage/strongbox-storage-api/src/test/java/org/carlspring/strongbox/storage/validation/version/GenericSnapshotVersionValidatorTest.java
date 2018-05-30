@@ -27,6 +27,7 @@ public class GenericSnapshotVersionValidatorTest
         Repository repository = new Repository("test-repository-for-nuget-release-validation");
         repository.setPolicy(RepositoryPolicyEnum.SNAPSHOT.toString());
         repository.setLayout("NuGet");
+        repository.setBasedir("");
         this.repository = new ImmutableRepository(repository);
     }
 

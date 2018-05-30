@@ -5,6 +5,7 @@ import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.providers.repository.proxied.LocalStorageProxyRepositoryExpiredArtifactsCleaner;
 import org.carlspring.strongbox.services.ArtifactEntryService;
+import org.carlspring.strongbox.storage.repository.remote.ImmutableRemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
 import org.carlspring.strongbox.storage.repository.remote.heartbeat.RemoteRepositoryAlivenessCacheManager;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
@@ -55,7 +56,7 @@ public class BaseLocalStorageProxyRepositoryExpiredArtifactsCleanerTest
     public void makeSureRemoteRepositoryIsRecognizedAsAlive()
             throws Exception
     {
-        Mockito.when(remoteRepositoryAlivenessCacheManager.isAlive(any(RemoteRepository.class))).thenReturn(true);
+        Mockito.when(remoteRepositoryAlivenessCacheManager.isAlive(any(ImmutableRemoteRepository.class))).thenReturn(true);
     }
 
     @Before

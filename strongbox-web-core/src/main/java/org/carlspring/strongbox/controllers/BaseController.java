@@ -1,7 +1,7 @@
 package org.carlspring.strongbox.controllers;
 
-import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.controllers.support.ErrorResponseEntityBody;
 import org.carlspring.strongbox.controllers.support.ListEntityBody;
 import org.carlspring.strongbox.controllers.support.ResponseEntityBody;
@@ -42,7 +42,7 @@ public abstract class BaseController
     @Inject
     protected RepositoryPathResolver repositoryPathResolver;
 
-    protected Configuration getConfiguration()
+    protected ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }

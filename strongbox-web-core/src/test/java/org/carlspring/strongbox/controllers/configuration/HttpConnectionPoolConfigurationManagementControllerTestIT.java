@@ -3,8 +3,10 @@ package org.carlspring.strongbox.controllers.configuration;
 import org.carlspring.strongbox.config.IntegrationTest;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 import org.carlspring.strongbox.rest.common.RestAssuredBaseTest;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -159,19 +161,19 @@ public class HttpConnectionPoolConfigurationManagementControllerTestIT
     @Test
     public void testSetAndGetNumberOfConnectionsForProxyRepositoryWithTextAcceptHeader()
     {
-        Configuration configuration = configurationManager.getConfiguration();
-        Optional<Repository> repositoryOpt = configuration.getStorages()
-                                                          .values()
-                                                          .stream()
-                                                          .filter(stg -> MapUtils.isNotEmpty(stg.getRepositories()))
-                                                          .flatMap(stg -> stg.getRepositories().values().stream())
-                                                          .filter(repository ->
+        ImmutableConfiguration configuration = configurationManager.getConfiguration();
+        Optional<ImmutableRepository> repositoryOpt = configuration.getStorages()
+                                                                   .values()
+                                                                   .stream()
+                                                                   .filter(stg -> MapUtils.isNotEmpty(stg.getRepositories()))
+                                                                   .flatMap(stg -> stg.getRepositories().values().stream())
+                                                                   .filter(repository ->
                                                                           repository.getRemoteRepository() != null &&
                                                                           repository.getRemoteRepository().getUrl() !=
                                                                           null)
-                                                          .findAny();
+                                                                   .findAny();
 
-        Repository repository = repositoryOpt.get();
+        ImmutableRepository repository = repositoryOpt.get();
         int numberOfConnections = 5;
 
         String url = getContextBaseUrl() + "/api/configuration/proxy/connection-pool/" +
@@ -204,19 +206,19 @@ public class HttpConnectionPoolConfigurationManagementControllerTestIT
     @Test
     public void testSetAndGetNumberOfConnectionsForProxyRepositoryWithJsonAcceptHeader()
     {
-        Configuration configuration = configurationManager.getConfiguration();
-        Optional<Repository> repositoryOpt = configuration.getStorages()
-                                                          .values()
-                                                          .stream()
-                                                          .filter(stg -> MapUtils.isNotEmpty(stg.getRepositories()))
-                                                          .flatMap(stg -> stg.getRepositories().values().stream())
-                                                          .filter(repository ->
+        ImmutableConfiguration configuration = configurationManager.getConfiguration();
+        Optional<ImmutableRepository> repositoryOpt = configuration.getStorages()
+                                                                   .values()
+                                                                   .stream()
+                                                                   .filter(stg -> MapUtils.isNotEmpty(stg.getRepositories()))
+                                                                   .flatMap(stg -> stg.getRepositories().values().stream())
+                                                                   .filter(repository ->
                                                                           repository.getRemoteRepository() != null &&
                                                                           repository.getRemoteRepository().getUrl() !=
                                                                           null)
-                                                          .findAny();
+                                                                   .findAny();
 
-        Repository repository = repositoryOpt.get();
+        ImmutableRepository repository = repositoryOpt.get();
         int numberOfConnections = 5;
 
         String url = getContextBaseUrl() + "/api/configuration/proxy/connection-pool/" +

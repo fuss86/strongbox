@@ -4,6 +4,7 @@ import org.carlspring.strongbox.artifact.MavenArtifact;
 import org.carlspring.strongbox.artifact.MavenDetachedArtifact;
 import org.carlspring.strongbox.artifact.coordinates.MavenArtifactCoordinates;
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.storage.search.SearchResult;
 
@@ -68,7 +69,7 @@ public class RepositoryIndexer
 
     private IndexerConfiguration indexerConfiguration;
 
-    private Configuration configuration;
+    private ImmutableConfiguration configuration;
 
     private String contextId;
 
@@ -406,12 +407,12 @@ public class RepositoryIndexer
         this.indexDir = indexDir;
     }
 
-    public Configuration getConfiguration()
+    public ImmutableConfiguration getConfiguration()
     {
         return configuration;
     }
 
-    public void setConfiguration(Configuration configuration)
+    public void setConfiguration(ImmutableConfiguration configuration)
     {
         this.configuration = configuration;
     }

@@ -9,11 +9,13 @@ import org.carlspring.strongbox.cron.jobs.RebuildMavenIndexesCronJob;
 import org.carlspring.strongbox.cron.services.CronTaskConfigurationService;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexerFactory;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -51,7 +53,7 @@ public class IndexedMavenRepositoryManagementStrategy
     private RepositoryPathResolver repositoryPathResolver;
 
     @Override
-    protected void createRepositoryInternal(Storage storage, Repository repository)
+    protected void createRepositoryInternal(ImmutableStorage storage, ImmutableRepository repository)
             throws IOException, RepositoryManagementStrategyException
     {
         if (repositoryFeatures.isIndexingEnabled(repository))
@@ -159,7 +161,7 @@ public class IndexedMavenRepositoryManagementStrategy
     }
 
     @Override
-    public void createRepositoryStructure(final Repository repository)
+    public void createRepositoryStructure(final ImmutableRepository repository)
             throws IOException
     {
         super.createRepositoryStructure(repository);
@@ -169,11 +171,6 @@ public class IndexedMavenRepositoryManagementStrategy
         {
             Files.createDirectories(indexRepositoryPath);
         }
-    }
-
-    public Configuration getConfiguration()
-    {
-        return configurationManager.getConfiguration();
     }
 
     public static boolean shouldDownloadAllRemoteRepositoryIndexes()

@@ -13,6 +13,7 @@ import org.carlspring.strongbox.resource.ResourceCloser;
 import org.carlspring.strongbox.storage.metadata.comparators.SnapshotVersionComparator;
 import org.carlspring.strongbox.storage.metadata.comparators.VersionComparator;
 import org.carlspring.strongbox.storage.metadata.versions.MetadataVersion;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryPolicyEnum;
 import org.carlspring.strongbox.storage.repository.UnknownRepositoryTypeException;
@@ -71,7 +72,7 @@ public class MavenMetadataManager
     {
     }
 
-    public Metadata readMetadata(Repository repository,
+    public Metadata readMetadata(ImmutableRepository repository,
                                  MavenArtifact artifact)
             throws IOException,
                    XmlPullParserException,
@@ -177,7 +178,7 @@ public class MavenMetadataManager
     /**
      * Generate a metadata file for an artifact.
      */
-    public void generateMetadata(Repository repository,
+    public void generateMetadata(ImmutableRepository repository,
                                  String path,
                                  VersionCollectionRequest request)
             throws IOException, XmlPullParserException, NoSuchAlgorithmException, ProviderImplementationException,
@@ -369,7 +370,7 @@ public class MavenMetadataManager
         });
     }
 
-    public void mergeAndStore(Repository repository,
+    public void mergeAndStore(ImmutableRepository repository,
                               MavenArtifact artifact,
                               Metadata mergeMetadata)
             throws IOException,

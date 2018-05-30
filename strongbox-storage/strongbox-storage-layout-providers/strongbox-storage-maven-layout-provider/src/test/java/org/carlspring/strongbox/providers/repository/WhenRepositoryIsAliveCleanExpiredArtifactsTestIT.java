@@ -3,7 +3,9 @@ package org.carlspring.strongbox.providers.repository;
 import org.carlspring.strongbox.config.Maven2LayoutProviderCronTasksTestConfig;
 import org.carlspring.strongbox.domain.ArtifactEntry;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import java.util.Optional;
@@ -36,8 +38,8 @@ public class WhenRepositoryIsAliveCleanExpiredArtifactsTestIT
                                                                                              path);
         assertThat(artifactEntryOptional, CoreMatchers.equalTo(Optional.empty()));
 
-        final Storage storage = getConfiguration().getStorage(artifactEntry.getStorageId());
-        final Repository repository = storage.getRepository(artifactEntry.getRepositoryId());
+        final ImmutableStorage storage = getConfiguration().getStorage(artifactEntry.getStorageId());
+        final ImmutableRepository repository = storage.getRepository(artifactEntry.getRepositoryId());
         final LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
 
         assertFalse(layoutProvider.containsPath(repository, path));

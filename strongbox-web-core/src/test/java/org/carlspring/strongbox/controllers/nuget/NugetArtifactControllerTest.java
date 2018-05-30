@@ -83,10 +83,10 @@ public class NugetArtifactControllerTest extends NugetRestAssuredBaseTest
 
         createStorage(STORAGE_ID);
 
-        Repository repository1 = nugetRepositoryFactory.createRepository(STORAGE_ID, REPOSITORY_RELEASES_1);
+        Repository repository1 = nugetRepositoryFactory.createRepository(REPOSITORY_RELEASES_1);
         repository1.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
 
-        createRepository(repository1);
+        createRepository(repository1, STORAGE_ID);
     }
 
     @Test

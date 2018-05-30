@@ -71,11 +71,11 @@ public class BrowseControllerTest
         MavenRepositoryConfiguration mavenRepositoryConfiguration = new MavenRepositoryConfiguration();
         mavenRepositoryConfiguration.setIndexingEnabled(true);
 
-        Repository repository = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY);
+        Repository repository = mavenRepositoryFactory.createRepository(REPOSITORY);
         repository.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository);
+        createRepository(repository, STORAGE0);
         
         generateArtifact(getRepositoryBasedir(STORAGE0, REPOSITORY).getAbsolutePath(),
                          "org.carlspring.strongbox.browsing:test-browsing",

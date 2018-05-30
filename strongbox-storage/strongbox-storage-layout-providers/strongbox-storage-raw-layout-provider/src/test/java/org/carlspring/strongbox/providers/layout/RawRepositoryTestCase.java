@@ -40,12 +40,12 @@ public class RawRepositoryTestCase
         RemoteRepository remoteRepository = new RemoteRepository();
         remoteRepository.setUrl(remoteRepositoryUrl);
 
-        Repository repository = rawRepositoryFactory.createRepository(storageId, repositoryId);
+        Repository repository = rawRepositoryFactory.createRepository(repositoryId);
         repository.setRemoteRepository(remoteRepository);
         repository.setLayout(RawLayoutProvider.ALIAS);
         repository.setType(RepositoryTypeEnum.PROXY.getType());
 
-        createRepository(repository);
+        createRepository(repository, storageId);
     }
 
 }

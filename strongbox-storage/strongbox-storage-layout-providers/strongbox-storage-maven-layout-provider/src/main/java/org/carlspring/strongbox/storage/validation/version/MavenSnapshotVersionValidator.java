@@ -1,6 +1,7 @@
 package org.carlspring.strongbox.storage.validation.version;
 
 import org.carlspring.strongbox.artifact.coordinates.ArtifactCoordinates;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.RepositoryPolicyEnum;
 import org.carlspring.strongbox.storage.validation.artifact.ArtifactCoordinatesValidatorRegistry;
@@ -54,7 +55,7 @@ public class MavenSnapshotVersionValidator
     }
 
     @Override
-    public boolean supports(Repository repository)
+    public boolean supports(ImmutableRepository repository)
     {
         return MavenVersionValidator.super.supports(repository) &&
                RepositoryPolicyEnum.SNAPSHOT.getPolicy().equals(repository.getPolicy());
@@ -69,7 +70,7 @@ public class MavenSnapshotVersionValidator
      * 1.0.8-alpha-1-20151025.032208-1
      */
     @Override
-    public void validate(Repository repository,
+    public void validate(ImmutableRepository repository,
                          ArtifactCoordinates coordinates)
             throws VersionValidationException
     {

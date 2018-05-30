@@ -75,8 +75,13 @@ public class ImmutableRepository
 
     public ImmutableRepository(final Repository delegate)
     {
+        this(delegate, null);
+    }
+
+    public ImmutableRepository(final Repository delegate,
+                               final ImmutableStorage storage)
+    {
         this.id = delegate.getId();
-        this.basedir = delegate.getBasedir();
         this.policy = delegate.getPolicy();
         this.implementation = delegate.getImplementation();
         this.layout = delegate.getLayout();
@@ -99,7 +104,8 @@ public class ImmutableRepository
         this.groupRepositories = immuteGroupRepositories(delegate.getGroupRepositories());
         this.artifactCoordinateValidators = immuteArtifactCoordinateValidators(
                 delegate.getArtifactCoordinateValidators());
-        this.storage = immuteStorage(delegate.getStorage());
+        this.storage = storage != null ? storage : immuteStorage(delegate.getStorage());
+        this.basedir = delegate.getBasedir();
     }
 
     private ImmutableProxyConfiguration immuteProxyConfiguration(final ProxyConfiguration source)

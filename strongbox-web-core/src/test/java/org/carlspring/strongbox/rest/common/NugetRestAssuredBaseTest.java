@@ -131,13 +131,13 @@ public abstract class NugetRestAssuredBaseTest
         storageManagementService.createStorage(storage);
     }
 
-    public void createRepository(Repository repository)
+    public void createRepository(Repository repository, String storageId)
             throws IOException, JAXBException, RepositoryManagementStrategyException
     {
-        configurationManagementService.saveRepository(repository.getStorage().getId(), repository);
+        configurationManagementService.saveRepository(storageId, repository);
 
         // Create the repository
-        repositoryManagementService.createRepository(repository.getStorage().getId(), repository.getId());
+        repositoryManagementService.createRepository(storageId, repository.getId());
     }
     
     public byte[] readPackageContent(Path packageFilePath)

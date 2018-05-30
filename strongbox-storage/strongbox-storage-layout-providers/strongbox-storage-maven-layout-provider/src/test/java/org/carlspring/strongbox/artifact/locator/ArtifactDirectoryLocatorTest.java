@@ -19,7 +19,9 @@ import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.providers.datastore.StorageProviderRegistry;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
 import org.carlspring.strongbox.util.TestFileUtils;
@@ -174,8 +176,8 @@ public class ArtifactDirectoryLocatorTest
     public void testLocateDirectories()
             throws IOException
     {
-        Storage storage = storageProviderRegistry.getStorage(STORAGE0);
-        Repository repository = storage.getRepository("releases");
+        ImmutableStorage storage = configurationManagementService.getConfiguration().getStorage(STORAGE0);
+        ImmutableRepository repository = storage.getRepository("releases");
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         RepositoryPath repositoryPath = layoutProvider.resolve(repository);
         
@@ -202,8 +204,8 @@ public class ArtifactDirectoryLocatorTest
     public void testLocateDirectoriesWithBasePath()
             throws IOException
     {
-        Storage storage = storageProviderRegistry.getStorage(STORAGE0);
-        Repository repository = storage.getRepository("releases");
+        ImmutableStorage storage = configurationManagementService.getConfiguration().getStorage(STORAGE0);
+        ImmutableRepository repository = storage.getRepository("releases");
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         RepositoryPath repositoryPath = layoutProvider.resolve(repository);
         

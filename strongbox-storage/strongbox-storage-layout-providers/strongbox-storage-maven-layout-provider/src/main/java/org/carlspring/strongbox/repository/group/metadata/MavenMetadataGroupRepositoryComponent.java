@@ -4,6 +4,7 @@ import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.repository.group.BaseMavenGroupRepositoryComponent;
 import org.carlspring.strongbox.storage.metadata.MavenMetadataManager;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -26,7 +27,7 @@ public class MavenMetadataGroupRepositoryComponent
     private MavenMetadataManager mavenMetadataManager;
 
     @Override
-    protected void cleanupGroupWhenArtifactPathNoLongerExistsInSubTree(final Repository groupRepository,
+    protected void cleanupGroupWhenArtifactPathNoLongerExistsInSubTree(final ImmutableRepository groupRepository,
                                                                        final String artifactPath)
             throws IOException
     {

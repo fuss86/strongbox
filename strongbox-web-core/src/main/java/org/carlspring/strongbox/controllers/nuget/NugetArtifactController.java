@@ -20,7 +20,9 @@ import org.carlspring.strongbox.providers.repository.RepositoryProviderRegistry;
 import org.carlspring.strongbox.repository.NugetRepositoryFeatures.RepositorySearchEventListener;
 import org.carlspring.strongbox.services.ArtifactManagementService;
 import org.carlspring.strongbox.services.ArtifactTagService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -157,7 +159,7 @@ public class NugetArtifactController extends BaseArtifactController
         nugetSearchRequest.setTargetFramework(targetFramework);
         repositorySearchEventListener.setNugetSearchRequest(nugetSearchRequest);
         
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
         RepositoryProvider provider = repositoryProviderRegistry.getProvider(repository.getType());
         
         Predicate predicate = createSearchPredicate(filter, normalizedSearchTerm);
@@ -318,7 +320,7 @@ public class NugetArtifactController extends BaseArtifactController
         nugetSearchRequest.setFilter(String.format("Id eq '%s'", packageId));
         repositorySearchEventListener.setNugetSearchRequest(nugetSearchRequest);
         
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
         RepositoryProvider provider = repositoryProviderRegistry.getProvider(repository.getType());
 
         Paginator paginator = new Paginator();
@@ -350,7 +352,7 @@ public class NugetArtifactController extends BaseArtifactController
                                                    Integer top)
         throws NugetFormatException
     {
-        Repository repository = getRepository(storageId, repositoryId);
+        ImmutableRepository repository = getRepository(storageId, repositoryId);
         RepositoryProvider provider = repositoryProviderRegistry.getProvider(repository.getType());
         
         Paginator paginator = new Paginator();
@@ -541,7 +543,7 @@ public class NugetArtifactController extends BaseArtifactController
     {
         logger.debug("Requested Nuget Package %s, %s, %s, %s.", storageId, repositoryId, packageId, packageVersion);
 
-        Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             logger.error("Unable to find storage by ID " + storageId);
@@ -551,7 +553,7 @@ public class NugetArtifactController extends BaseArtifactController
             return;
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             logger.error("Unable to find repository by ID " + repositoryId + " for storage " + storageId);

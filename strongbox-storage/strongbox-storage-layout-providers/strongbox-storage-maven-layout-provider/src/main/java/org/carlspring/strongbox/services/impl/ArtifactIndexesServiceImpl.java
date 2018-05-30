@@ -4,6 +4,7 @@ import org.carlspring.strongbox.artifact.locator.ArtifactDirectoryLocator;
 import org.carlspring.strongbox.config.MavenIndexerEnabledCondition;
 import org.carlspring.strongbox.configuration.Configuration;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.locator.handlers.MavenIndexerManagementOperation;
 import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
@@ -13,12 +14,15 @@ import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.repository.IndexedMavenRepositoryFeatures;
 import org.carlspring.strongbox.repository.group.index.MavenIndexGroupRepositoryComponent;
 import org.carlspring.strongbox.services.ArtifactIndexesService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.util.IndexContextHelper;
+import org.carlspring.strongbox.xml.configuration.repository.ImmutableMavenRepositoryConfiguration;
 import org.carlspring.strongbox.xml.configuration.repository.MavenRepositoryConfiguration;
 
 import javax.inject.Inject;
@@ -61,8 +65,8 @@ public class ArtifactIndexesServiceImpl
     public void addArtifactToIndex(RepositoryPath artifactPath)
             throws IOException
     {
-        Repository repository = artifactPath.getFileSystem().getRepository();
-        Storage storage = repository.getStorage();
+        ImmutableRepository repository = artifactPath.getFileSystem().getRepository();
+        ImmutableStorage storage = repository.getStorage();
 
         String contextId = IndexContextHelper.getContextId(storage.getId(),
                                                            repository.getId(),
@@ -93,8 +97,8 @@ public class ArtifactIndexesServiceImpl
     public void rebuildIndex(RepositoryPath repositoryPath)
             throws IOException
     {
-        Repository repository = repositoryPath.getFileSystem().getRepository();
-        Storage storage = repository.getStorage();
+        ImmutableRepository repository = repositoryPath.getFileSystem().getRepository();
+        ImmutableStorage storage = repository.getStorage();
 
         if (!features.isIndexingEnabled(repository))
         {
@@ -122,14 +126,14 @@ public class ArtifactIndexesServiceImpl
     public void rebuildIndexes(String storageId)
             throws IOException
     {
-        Map<String, Repository> repositories = getRepositories(storageId);
+        Map<String, ImmutableRepository> repositories = getRepositories(storageId);
 
         logger.debug("Rebuilding indexes for repositories " + repositories.keySet());
 
-        for (Entry<String, Repository> repositoryEntry : repositories.entrySet())
+        for (Entry<String, ImmutableRepository> repositoryEntry : repositories.entrySet())
         {
-            Repository repository = repositoryEntry.getValue();
-            if (!(repository.getRepositoryConfiguration() instanceof MavenRepositoryConfiguration))
+            ImmutableRepository repository = repositoryEntry.getValue();
+            if (!(repository.getRepositoryConfiguration() instanceof ImmutableMavenRepositoryConfiguration))
             {
                 logger.debug("Skip rebuilding indexes for " + repositoryEntry.getKey());
                 continue;
@@ -145,29 +149,29 @@ public class ArtifactIndexesServiceImpl
     public void rebuildIndexes()
             throws IOException
     {
-        Map<String, Storage> storages = getStorages();
+        Map<String, ImmutableStorage> storages = getStorages();
         for (String storageId : storages.keySet())
         {
             rebuildIndexes(storageId);
         }
     }
 
-    private Configuration getConfiguration()
+    private ImmutableConfiguration getConfiguration()
     {
         return configurationManager.getConfiguration();
     }
 
-    private Map<String, Storage> getStorages()
+    private Map<String, ImmutableStorage> getStorages()
     {
         return getConfiguration().getStorages();
     }
 
-    private Map<String, Repository> getRepositories(String storageId)
+    private Map<String, ImmutableRepository> getRepositories(String storageId)
     {
         return getStorages().get(storageId).getRepositories();
     }
 
-    private Repository getRepository(String storageId,
+    private ImmutableRepository getRepository(String storageId,
                                      String repositoryId)
     {
         return getConfiguration().getStorage(storageId).getRepository(repositoryId);

@@ -1,6 +1,7 @@
 package org.carlspring.strongbox.storage.validation;
 
 import org.carlspring.strongbox.providers.layout.Maven2LayoutProvider;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import java.util.Set;
@@ -15,7 +16,7 @@ public interface MavenArtifactCoordinatesValidator extends ArtifactCoordinatesVa
 
 
     @Override
-    default boolean supports(Repository repository)
+    default boolean supports(ImmutableRepository repository)
     {
         return supports(repository.getLayout());
     }

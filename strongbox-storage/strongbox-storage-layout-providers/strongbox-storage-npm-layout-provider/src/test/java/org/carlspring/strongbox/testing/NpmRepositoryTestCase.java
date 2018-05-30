@@ -37,12 +37,12 @@ public class NpmRepositoryTestCase
         RemoteRepository remoteRepository = new RemoteRepository();
         remoteRepository.setUrl(remoteRepositoryUrl);
 
-        Repository repository = npmRepositoryFactory.createRepository(storageId, repositoryId);
+        Repository repository = npmRepositoryFactory.createRepository(repositoryId);
         repository.setRemoteRepository(remoteRepository);
         repository.setLayout(NpmLayoutProvider.ALIAS);
         repository.setType(RepositoryTypeEnum.PROXY.getType());
 
-        createRepository(repository);
+        createRepository(repository, storageId);
     }
 
 }

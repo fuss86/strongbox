@@ -4,6 +4,7 @@ import org.carlspring.strongbox.config.Maven2LayoutProviderTestConfig;
 import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.providers.search.SearchException;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.MavenRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.testing.TestCaseWithMavenArtifactGenerationAndIndexing;
@@ -64,11 +65,11 @@ public class Maven2LayoutProviderTest
         MavenRepositoryConfiguration mavenRepositoryConfiguration = new MavenRepositoryConfiguration();
         mavenRepositoryConfiguration.setIndexingEnabled(true);
 
-        Repository repository = mavenRepositoryFactory.createRepository(STORAGE0, REPOSITORY_RELEASES);
+        Repository repository = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES);
         repository.setAllowsForceDeletion(true);
         repository.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository);
+        createRepository(repository, STORAGE0);
 
         generateArtifact(REPOSITORY_RELEASES_BASEDIR.getAbsolutePath(),
                          "com.artifacts.to.delete.releases:delete-foo",
@@ -98,9 +99,9 @@ public class Maven2LayoutProviderTest
             throws IOException,
                    SearchException
     {
-        Repository repository = configurationManager.getConfiguration()
-                                                    .getStorage(STORAGE0)
-                                                    .getRepository(REPOSITORY_RELEASES);
+        ImmutableRepository repository = configurationManager.getConfiguration()
+                                                             .getStorage(STORAGE0)
+                                                             .getRepository(REPOSITORY_RELEASES);
 
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
 
@@ -122,9 +123,9 @@ public class Maven2LayoutProviderTest
     public void testDeleteArtifactDirectory()
             throws IOException, SearchException
     {
-        Repository repository = configurationManager.getConfiguration()
-                                                    .getStorage(STORAGE0)
-                                                    .getRepository(REPOSITORY_RELEASES);
+        ImmutableRepository repository = configurationManager.getConfiguration()
+                                                             .getStorage(STORAGE0)
+                                                             .getRepository(REPOSITORY_RELEASES);
 
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
 

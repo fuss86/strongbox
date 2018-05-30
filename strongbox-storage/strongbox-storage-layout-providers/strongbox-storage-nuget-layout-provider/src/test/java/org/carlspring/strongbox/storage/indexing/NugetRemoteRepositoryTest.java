@@ -10,7 +10,9 @@ import org.carlspring.strongbox.nuget.NugetSearchRequest;
 import org.carlspring.strongbox.repository.NugetRepositoryFeatures;
 import org.carlspring.strongbox.services.ArtifactEntryService;
 import org.carlspring.strongbox.services.RepositoryManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.NugetRepositoryFactory;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.storage.repository.remote.RemoteRepository;
@@ -79,13 +81,13 @@ public class NugetRemoteRepositoryTest
     public void initialize()
         throws Exception
     {
-        Repository repository = nugetRepositoryFactory.createRepository(NUGET_COMMON_STORAGE, REPOSITORY_PROXY);
+        Repository repository = nugetRepositoryFactory.createRepository(REPOSITORY_PROXY);
         repository.setType("proxy");
         repository.setRemoteRepository(new RemoteRepository());
         repository.getRemoteRepository().setUrl("https://www.nuget.org/api/v2");
 
-        configurationManagementService.saveRepository(repository.getStorage().getId(), repository);
-        repositoryManagementService.createRepository(repository.getStorage().getId(), repository.getId());
+        configurationManagementService.saveRepository(NUGET_COMMON_STORAGE, repository);
+        repositoryManagementService.createRepository(NUGET_COMMON_STORAGE, repository.getId());
     }
 
     @After
@@ -104,8 +106,8 @@ public class NugetRemoteRepositoryTest
         throws ArtifactTransportException,
         IOException
     {
-        Storage storage = configurationManager.getConfiguration().getStorage(NUGET_COMMON_STORAGE);
-        Repository repository = storage.getRepository(REPOSITORY_PROXY);
+        ImmutableStorage storage = configurationManager.getConfiguration().getStorage(NUGET_COMMON_STORAGE);
+        ImmutableRepository repository = storage.getRepository(REPOSITORY_PROXY);
 
         NugetSearchRequest nugetSearchRequest = new NugetSearchRequest();
         nugetSearchRequest.setFilter(String.format("Id eq '%s'", "NHibernate"));

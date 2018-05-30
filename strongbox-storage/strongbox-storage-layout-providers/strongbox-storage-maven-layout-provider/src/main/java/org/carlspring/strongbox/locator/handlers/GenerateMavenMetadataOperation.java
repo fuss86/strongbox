@@ -5,6 +5,7 @@ import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.storage.metadata.MavenMetadataManager;
 import org.carlspring.strongbox.storage.metadata.VersionCollectionRequest;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ public class GenerateMavenMetadataOperation
     {
         try
         {
-            final Repository repository = artifactPath.getFileSystem().getRepository();
+            final ImmutableRepository repository = artifactPath.getFileSystem().getRepository();
             String path = RepositoryFiles.stringValue(artifactPath);
             mavenMetadataManager.generateMetadata(repository, path, request);
             artifactEventListenerRegistry.dispatchArtifactMetadataFileUpdatedEvent(artifactPath.resolve("maven-metadata.xml"));

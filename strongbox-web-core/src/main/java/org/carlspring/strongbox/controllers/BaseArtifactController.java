@@ -3,7 +3,8 @@ package org.carlspring.strongbox.controllers;
 import org.carlspring.strongbox.event.artifact.ArtifactEventListenerRegistry;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.services.ArtifactManagementService;
-import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.ImmutableStorage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.utils.ArtifactControllerHelper;
 
@@ -27,13 +28,13 @@ public abstract class BaseArtifactController
     @Inject
     protected ArtifactEventListenerRegistry artifactEventListenerRegistry;
 
-    public Storage getStorage(String storageId)
+    public ImmutableStorage getStorage(String storageId)
     {
         return configurationManager.getConfiguration().getStorage(storageId);
     }
 
-    public Repository getRepository(String storageId,
-                                    String repositoryId)
+    public ImmutableRepository getRepository(String storageId,
+                                             String repositoryId)
     {
         return getStorage(storageId).getRepository(repositoryId);
     }
@@ -42,7 +43,7 @@ public abstract class BaseArtifactController
     protected boolean provideArtifactDownloadResponse(HttpServletRequest request,
                                                       HttpServletResponse response,
                                                       HttpHeaders httpHeaders,
-                                                      Repository repository,
+                                                      ImmutableRepository repository,
                                                       String path)
             throws Exception
     {

@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
-
 /**
  * @author mtodorov
  */
@@ -300,7 +298,11 @@ public class Repository
 
     public void setGroupRepositories(Set<String> groupRepositories)
     {
-        this.groupRepositories = Maps.toMap(groupRepositories, x -> x);
+        this.groupRepositories.clear();
+        if (groupRepositories != null)
+        {
+            groupRepositories.stream().forEach(value -> this.groupRepositories.put(value, value));
+        }
     }
 
     public void addRepositoryToGroup(String repositoryId)
@@ -456,7 +458,11 @@ public class Repository
 
     public void setArtifactCoordinateValidators(Set<String> artifactCoordinateValidators)
     {
-        this.artifactCoordinateValidators = Maps.toMap(artifactCoordinateValidators, x -> x);
+        this.artifactCoordinateValidators.clear();
+        if (artifactCoordinateValidators != null)
+        {
+            artifactCoordinateValidators.stream().forEach(value -> this.artifactCoordinateValidators.put(value, value));
+        }
     }
 
 }

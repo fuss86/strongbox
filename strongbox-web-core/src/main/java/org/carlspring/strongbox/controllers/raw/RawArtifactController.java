@@ -2,7 +2,9 @@ package org.carlspring.strongbox.controllers.raw;
 
 import org.carlspring.strongbox.controllers.BaseArtifactController;
 import org.carlspring.strongbox.services.ArtifactManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -82,7 +84,7 @@ public class RawArtifactController
     {
         logger.debug("Requested /" + storageId + "/" + repositoryId + "/" + path + ".");
 
-        Storage storage = configurationManager.getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = configurationManager.getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             logger.error("Unable to find storage by ID " + storageId);
@@ -92,7 +94,7 @@ public class RawArtifactController
             return;
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             logger.error("Unable to find repository by ID " + repositoryId + " for storage " + storageId);

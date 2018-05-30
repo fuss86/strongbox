@@ -4,7 +4,9 @@ import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.cron.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.cron.services.JobManager;
 import org.carlspring.strongbox.services.ArtifactMetadataService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -41,7 +43,7 @@ public class RebuildMavenMetadataCronJob
 
         if (storageId == null)
         {
-            Map<String, Storage> storages = getStorages();
+            Map<String, ImmutableStorage> storages = getStorages();
             for (String storage : storages.keySet())
             {
                 rebuildRepositories(storage);
@@ -68,7 +70,7 @@ public class RebuildMavenMetadataCronJob
     private void rebuildRepositories(String storageId)
             throws NoSuchAlgorithmException, XmlPullParserException, IOException
     {
-        Map<String, Repository> repositories = getRepositories(storageId);
+        Map<String, ImmutableRepository> repositories = getRepositories(storageId);
 
         for (String repository : repositories.keySet())
         {
@@ -76,12 +78,12 @@ public class RebuildMavenMetadataCronJob
         }
     }
 
-    private Map<String, Storage> getStorages()
+    private Map<String, ImmutableStorage> getStorages()
     {
         return configurationManager.getConfiguration().getStorages();
     }
 
-    private Map<String, Repository> getRepositories(String storageId)
+    private Map<String, ImmutableRepository> getRepositories(String storageId)
     {
         return getStorages().get(storageId).getRepositories();
     }

@@ -1,10 +1,12 @@
 package org.carlspring.strongbox.locator.handlers;
 
 import org.carlspring.strongbox.services.ArtifactIndexesService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 import org.carlspring.strongbox.util.IndexContextHelper;
 
@@ -17,11 +19,11 @@ public class MavenGroupRepositoryIndexerManagementOperation
 
     private final RepositoryIndexManager repositoryIndexManager;
 
-    private final Repository groupRepository;
+    private final ImmutableRepository groupRepository;
 
     public MavenGroupRepositoryIndexerManagementOperation(final ArtifactIndexesService artifactIndexesService,
                                                           final RepositoryIndexManager repositoryIndexManager,
-                                                          final Repository groupRepository)
+                                                          final ImmutableRepository groupRepository)
     {
         super(artifactIndexesService);
         this.repositoryIndexManager = repositoryIndexManager;
@@ -31,7 +33,7 @@ public class MavenGroupRepositoryIndexerManagementOperation
     @Override
     protected RepositoryIndexer getRepositoryIndexer()
     {
-        Storage storage = groupRepository.getStorage();
+        ImmutableStorage storage = groupRepository.getStorage();
         String contextId = IndexContextHelper.getContextId(storage.getId(),
                                                            groupRepository.getId(),
                                                            IndexTypeEnum.LOCAL.getType());

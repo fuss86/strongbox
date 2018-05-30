@@ -1,6 +1,8 @@
 package org.carlspring.strongbox.domain;
 
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import java.io.IOException;
@@ -22,26 +24,26 @@ public class DirectoryListing
 
     private List<FileContent> files;
 
-    public static DirectoryListing fromStorages(Map<String, Storage> storages)
+    public static DirectoryListing fromStorages(Map<String, ImmutableStorage> storages)
     {
         DirectoryListing directoryListing = new DirectoryListing();
 
-        for (Map.Entry<String, Storage> entry : storages.entrySet())
+        for (Map.Entry<String, ImmutableStorage> entry : storages.entrySet())
         {
-            Storage storage = entry.getValue();
+            ImmutableStorage storage = entry.getValue();
             directoryListing.getDirectories().add(new FileContent(storage.getId()));
         }
 
         return directoryListing;
     }
 
-    public static DirectoryListing fromRepositories(Map<String, Repository> repositories)
+    public static DirectoryListing fromRepositories(Map<String, ImmutableRepository> repositories)
     {
         DirectoryListing directoryListing = new DirectoryListing();
 
-        for (Map.Entry<String, Repository> entry : repositories.entrySet())
+        for (Map.Entry<String, ImmutableRepository> entry : repositories.entrySet())
         {
-            Repository repository = entry.getValue();
+            ImmutableRepository repository = entry.getValue();
             FileContent fileContent = new FileContent(repository.getId());
             directoryListing.getDirectories().add(fileContent);
         }

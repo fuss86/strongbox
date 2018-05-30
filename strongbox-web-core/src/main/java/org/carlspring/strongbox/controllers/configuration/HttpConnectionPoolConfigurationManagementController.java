@@ -4,7 +4,9 @@ import org.carlspring.strongbox.controllers.support.NumberOfConnectionsEntityBod
 import org.carlspring.strongbox.controllers.support.PoolStatsEntityBody;
 import org.carlspring.strongbox.service.ProxyRepositoryConnectionPoolConfigurationService;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.xml.bind.JAXBException;
@@ -62,14 +64,14 @@ public class HttpConnectionPoolConfigurationManagementController
             throws IOException, JAXBException
     {
 
-        Storage storage = getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .body(getResponseEntityBody("The storage does not exist!", accept));
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (storage.getRepository(repositoryId) == null)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -106,14 +108,14 @@ public class HttpConnectionPoolConfigurationManagementController
                                                          @PathVariable(value = "repositoryId") String repositoryId,
                                                          @RequestHeader(HttpHeaders.ACCEPT) String accept)
     {
-        Storage storage = getConfiguration().getStorage(storageId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
         if (storage == null)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .body(getResponseEntityBody("The storage does not exist!", accept));
         }
 
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

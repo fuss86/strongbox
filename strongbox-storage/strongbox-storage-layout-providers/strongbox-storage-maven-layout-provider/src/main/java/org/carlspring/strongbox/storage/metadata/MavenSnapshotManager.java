@@ -9,6 +9,7 @@ import org.carlspring.strongbox.providers.io.RootRepositoryPath;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.layout.LayoutProviderRegistry;
 import org.carlspring.strongbox.providers.search.SearchException;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -56,7 +57,7 @@ public class MavenSnapshotManager
     {
     }
 
-    public void deleteTimestampedSnapshotArtifacts(Repository repository,
+    public void deleteTimestampedSnapshotArtifacts(ImmutableRepository repository,
                                                    String artifactPath,
                                                    VersionCollectionRequest request,
                                                    int numberToKeep,
@@ -108,7 +109,7 @@ public class MavenSnapshotManager
     }
 
     private boolean removeTimestampedSnapshot(String basePath,
-                                              Repository repository,
+                                              ImmutableRepository repository,
                                               int numberToKeep,
                                               int keepPeriod)
             throws ProviderImplementationException,

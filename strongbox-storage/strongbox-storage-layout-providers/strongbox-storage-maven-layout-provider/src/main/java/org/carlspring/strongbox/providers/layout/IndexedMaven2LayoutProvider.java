@@ -8,10 +8,12 @@ import org.carlspring.strongbox.providers.io.RepositoryFiles;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.IndexedMavenRepositoryFeatures;
 import org.carlspring.strongbox.services.ArtifactIndexesService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.IndexTypeEnum;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexer;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -57,7 +59,7 @@ public class IndexedMaven2LayoutProvider
     public void deleteFromIndex(RepositoryPath path)
             throws IOException
     {
-        Repository repository = path.getFileSystem().getRepository();
+        ImmutableRepository repository = path.getFileSystem().getRepository();
         if (!mavenRepositoryFeatures.isIndexingEnabled(repository))
         {
             return;
@@ -85,8 +87,8 @@ public class IndexedMaven2LayoutProvider
     {
         logger.debug("Closing " + storageId + ":" + repositoryId + ":" + path + "...");
 
-        Storage storage = getConfiguration().getStorage(storageId);
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableStorage storage = getConfiguration().getStorage(storageId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         RepositoryPath repositoryPath = resolve(repository).resolve(path);
 
         closeIndex(repositoryPath);
@@ -106,7 +108,7 @@ public class IndexedMaven2LayoutProvider
 
     private RepositoryIndexer getRepositoryIndexer(RepositoryPath path)
     {
-        Repository repository = path.getFileSystem().getRepository();
+        ImmutableRepository repository = path.getFileSystem().getRepository();
 
         if (!mavenRepositoryFeatures.isIndexingEnabled(repository))
         {

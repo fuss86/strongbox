@@ -89,18 +89,18 @@ public class MavenArtifactIndexControllerTest
         MavenRepositoryConfiguration mavenRepositoryConfiguration = new MavenRepositoryConfiguration();
         mavenRepositoryConfiguration.setIndexingEnabled(true);
 
-        Repository repository1 = mavenRepositoryFactory.createRepository(STORAGE_ID, REPOSITORY_RELEASES_1);
+        Repository repository1 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES_1);
         repository1.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository1.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository1);
+        createRepository(repository1, STORAGE_ID);
 
         // Used by testRebuildIndexesInStorage()
-        Repository repository2 = mavenRepositoryFactory.createRepository(STORAGE_ID, REPOSITORY_RELEASES_2);
+        Repository repository2 = mavenRepositoryFactory.createRepository(REPOSITORY_RELEASES_2);
         repository2.setPolicy(RepositoryPolicyEnum.RELEASE.getPolicy());
         repository2.setRepositoryConfiguration(mavenRepositoryConfiguration);
 
-        createRepository(repository2);
+        createRepository(repository2, STORAGE_ID);
     }
 
     @Override

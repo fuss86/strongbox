@@ -40,7 +40,9 @@ import org.carlspring.strongbox.providers.layout.Maven2LayoutProvider;
 import org.carlspring.strongbox.providers.layout.NpmLayoutProvider;
 import org.carlspring.strongbox.providers.layout.NugetLayoutProvider;
 import org.carlspring.strongbox.providers.layout.RawLayoutProvider;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 /**
@@ -132,14 +134,14 @@ public class HeaderMappingFilter
         String storageId = pathParts[2];
         String repositoryId = pathParts[3];
 
-        Storage storage = configurationManager.getConfiguration()
-                                              .getStorage(storageId);
+        ImmutableStorage storage = configurationManager.getConfiguration()
+                                                       .getStorage(storageId);
         if (storage == null)
         {
             throw new IllegalArgumentException(String.format("Storage not found [%s]", storageId));
         }
         
-        Repository repository = storage.getRepository(repositoryId);
+        ImmutableRepository repository = storage.getRepository(repositoryId);
         if (repository == null)
         {
             throw new IllegalArgumentException(String.format("Repository not found [%s]", repositoryId));

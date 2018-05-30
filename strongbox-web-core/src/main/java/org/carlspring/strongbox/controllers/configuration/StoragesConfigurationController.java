@@ -1,14 +1,17 @@
 package org.carlspring.strongbox.controllers.configuration;
 
 import org.carlspring.strongbox.configuration.Configuration;
+import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategyException;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.services.RepositoryManagementService;
 import org.carlspring.strongbox.services.StorageManagementService;
 import org.carlspring.strongbox.services.support.ConfigurationException;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import java.io.IOException;
@@ -102,7 +105,7 @@ public class StoragesConfigurationController
     public ResponseEntity getStorage(@ApiParam(value = "The storageId", required = true)
                                      @PathVariable final String storageId)
     {
-        final Storage storage = configurationManagementService.getStorage(storageId);
+        final ImmutableStorage storage = configurationManagementService.getConfiguration().getStorage(storageId);
 
         if (storage != null)
         {
@@ -132,7 +135,7 @@ public class StoragesConfigurationController
                                         @ApiParam(value = "Whether to force delete and remove the storage from the file system")
                                         @RequestParam(name = "force", defaultValue = "false") final boolean force)
     {
-        if (configurationManagementService.getStorage(storageId) != null)
+        if (configurationManagementService.getConfiguration().getStorage(storageId) != null)
         {
             try
             {
@@ -186,10 +189,9 @@ public class StoragesConfigurationController
         {
             logger.debug("Creating repository " + storageId + ":" + repositoryId + "...");
 
-            repository.setStorage(configurationManagementService.getStorage(storageId));
             configurationManagementService.saveRepository(storageId, repository);
 
-            final RepositoryPath repositoryPath = repositoryPathResolver.resolve(repository);
+            final RepositoryPath repositoryPath = repositoryPathResolver.resolve(new ImmutableRepository(repository));
             if (!Files.exists(repositoryPath))
             {
                 repositoryManagementService.createRepository(storageId, repository.getId());
@@ -223,8 +225,9 @@ public class StoragesConfigurationController
 
         try
         {
-            Repository repository = configurationManagementService.getStorage(storageId)
-                                                                  .getRepository(repositoryId);
+            ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                           .getStorage(storageId)
+                                                                           .getRepository(repositoryId);
 
             if (repository != null)
             {
@@ -264,8 +267,9 @@ public class StoragesConfigurationController
                                            @ApiParam(value = "Whether to force delete the repository from the file system")
                                            @RequestParam(name = "force", defaultValue = "false") final boolean force)
     {
-        final Repository repository = configurationManagementService.getStorage(storageId)
-                                                                    .getRepository(repositoryId);
+        final ImmutableRepository repository = configurationManagementService.getConfiguration()
+                                                                             .getStorage(storageId)
+                                                                             .getRepository(repositoryId);
         if (repository != null)
         {
             try
@@ -281,11 +285,7 @@ public class StoragesConfigurationController
                     repositoryManagementService.removeRepository(storageId, repository.getId());
                 }
 
-                Configuration configuration = getConfiguration();
-                Storage storage = configuration.getStorage(storageId);
-                storage.removeRepository(repositoryId);
-
-                configurationManagementService.saveStorage(storage);
+                configurationManagementService.removeRepository(storageId, repositoryId);
 
                 logger.debug("Removed repository " + storageId + ":" + repositoryId + ".");
 

@@ -5,6 +5,7 @@ import org.carlspring.strongbox.configuration.ConfigurationManager;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.RepositoryInitializationException;
 import org.carlspring.strongbox.services.ArtifactIndexesService;
+import org.carlspring.strongbox.xml.configuration.repository.ImmutableMavenRepositoryConfiguration;
 import org.carlspring.strongbox.xml.configuration.repository.MavenRepositoryConfiguration;
 
 import javax.inject.Inject;
@@ -102,7 +103,7 @@ public class RepositoryIndexerFactory
                                                           final String repositoryId)
     {
         List<IndexCreator> indexCreators = Lists.newArrayList(indexerConfiguration.getIndexersAsList());
-        final MavenRepositoryConfiguration mavenRepositoryConfiguration = (MavenRepositoryConfiguration)
+        final ImmutableMavenRepositoryConfiguration mavenRepositoryConfiguration = (ImmutableMavenRepositoryConfiguration)
                                                                                   configurationManager
                                                                                           .getConfiguration()
                                                                                           .getStorage(storageId)

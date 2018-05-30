@@ -6,7 +6,9 @@ import org.carlspring.strongbox.providers.io.RepositoryPathResolver;
 import org.carlspring.strongbox.providers.layout.LayoutProvider;
 import org.carlspring.strongbox.providers.repository.ProxyRepositoryProvider;
 import org.carlspring.strongbox.services.ArtifactEntryService;
+import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
+import org.carlspring.strongbox.storage.repository.ImmutableRepository;
 import org.carlspring.strongbox.storage.repository.Repository;
 
 import javax.inject.Inject;
@@ -113,8 +115,8 @@ public class CleanupExpiredArtifactsFromProxyRepositoriesCronJobTestIT
                                                                                                            path);
                 assertThat(optionalArtifactEntryFromDb, CoreMatchers.equalTo(Optional.empty()));
 
-                final Storage storage = getConfiguration().getStorage(artifactEntry.getStorageId());
-                final Repository repository = storage.getRepository(artifactEntry.getRepositoryId());
+                final ImmutableStorage storage = getConfiguration().getStorage(artifactEntry.getStorageId());
+                final ImmutableRepository repository = storage.getRepository(artifactEntry.getRepositoryId());
                 final LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
 
                 try

@@ -105,7 +105,8 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
     private MavenRepositoryFactory mavenRepositoryFactory;
 
 
-    protected void createRepositoryWithArtifacts(Repository repository,
+    protected void createRepositoryWithArtifacts(String storageId,
+                                                 Repository repository,
                                                  String ga,
                                                  String... versions)
             throws IOException,
@@ -114,7 +115,7 @@ public abstract class TestCaseWithMavenArtifactGenerationAndIndexing
                    XmlPullParserException,
                    RepositoryManagementStrategyException
     {
-        createRepository(repository);
+        createRepository(repository, storageId);
         generateArtifactsReIndexAndPack(repository.getStorage().getId(), repository.getId(), ga, versions);
     }
 
