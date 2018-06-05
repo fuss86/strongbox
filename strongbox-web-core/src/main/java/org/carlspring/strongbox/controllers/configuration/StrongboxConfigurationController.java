@@ -73,6 +73,6 @@ public class StrongboxConfigurationController
         logger.debug("Retrieved strongbox.xml configuration file.");
 
         return ResponseEntity.status(HttpStatus.OK)
-                             .body(getConfiguration());
+                             .body(getMutableConfigurationClone());
     }
 }

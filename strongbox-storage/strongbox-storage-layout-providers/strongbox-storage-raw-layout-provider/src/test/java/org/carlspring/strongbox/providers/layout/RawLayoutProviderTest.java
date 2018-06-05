@@ -149,6 +149,7 @@ public class RawLayoutProviderTest
             throws IOException, JAXBException, RepositoryManagementStrategyException
     {
         Repository repository = new Repository(repositoryId);
+        repository.setAllowsRedeployment(true);
         repository.setLayout(RawLayoutProvider.ALIAS);
         repository.setArtifactCoordinateValidators(Collections.emptySet());
 

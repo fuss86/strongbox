@@ -223,13 +223,13 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
             throws Exception
     {
 
-        /*
-        Configuration currentConfiguration = getConfiguration();
-        Configuration configurationBackup = getConfiguration();
-*/
+
+        Configuration currentConfiguration = configurationManagementService.getMutableConfigurationClone();
+        Configuration configurationBackup = configurationManagementService.getMutableConfigurationClone();
+
         try
         {
-            //removeNotMavenRepositories(currentConfiguration);
+            removeNotMavenRepositories(currentConfiguration);
 
             final File basedirTrash1 = repositoryTrashPathResolver.resolve(new ImmutableRepository(repository2)).toFile();
             File[] dirs1 = basedirTrash1.listFiles();
@@ -280,7 +280,7 @@ public class ClearTrashCronJobFromMaven2RepositoryTestIT
         }
         finally
         {
-            //configurationManagementService.setConfiguration(configurationBackup);
+            configurationManagementService.setConfiguration(configurationBackup);
         }
     }
 
