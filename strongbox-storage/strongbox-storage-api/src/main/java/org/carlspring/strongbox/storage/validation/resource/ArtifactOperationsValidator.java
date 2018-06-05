@@ -117,7 +117,7 @@ public class ArtifactOperationsValidator
                    ProviderImplementationException
     {
         LayoutProvider layoutProvider = getLayoutProvider(repository, layoutProviderRegistry);
-        if (layoutProvider.containsArtifact(repository, coordinates) && !repository.isAllowsDeployment())
+        if (layoutProvider.containsArtifact(repository, coordinates) && !repository.isAllowsRedeployment())
         {
             throw new ArtifactStorageException("Re-deployment of artifacts to " +
                                                repository.getStorage().getId() + ":" + repository.getId() +

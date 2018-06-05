@@ -31,7 +31,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +67,26 @@ public class ConfigurationManagementServiceImpl
      * @see #getConfiguration()
      */
     private Configuration configuration;
+
+    @Override
+    public Configuration getMutableConfigurationClone()
+    {
+        final Lock readLock = configurationLock.readLock();
+        readLock.lock();
+
+        try
+        {
+            return SerializationUtils.clone(configuration);
+        }
+        catch (Exception e)
+        {
+            throw Throwables.propagate(e);
+        }
+        finally
+        {
+            readLock.unlock();
+        }
+    }
 
     @Override
     public ImmutableConfiguration getConfiguration()
@@ -491,7 +513,8 @@ public class ConfigurationManagementServiceImpl
         modifyInLock(configuration ->
                      {
                          configuration.getRemoteRepositoriesConfiguration()
-                                      .setRemoteRepositoryRetryArtifactDownloadConfiguration(remoteRepositoryRetryArtifactDownloadConfiguration);
+                                      .setRemoteRepositoryRetryArtifactDownloadConfiguration(
+                                              remoteRepositoryRetryArtifactDownloadConfiguration);
                      });
     }
 

@@ -38,7 +38,7 @@ public class ImmutableProxyConfiguration
 
     private List<String> immuteNonProxyHosts(final List<String> source)
     {
-        return nonProxyHosts != null ? ImmutableList.copyOf(source) : Collections.emptyList();
+        return source != null ? ImmutableList.copyOf(source) : Collections.emptyList();
     }
 
     public String getHost()

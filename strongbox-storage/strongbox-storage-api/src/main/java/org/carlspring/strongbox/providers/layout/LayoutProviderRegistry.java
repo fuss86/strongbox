@@ -44,14 +44,14 @@ public class LayoutProviderRegistry extends AbstractMappedProviderRegistry<Layou
     public void deleteTrash()
             throws IOException
     {
-        for (Map.Entry entry : getConfiguration().getStorages().entrySet())
+        for (Map.Entry<String, ImmutableStorage> entry : getConfiguration().getStorages().entrySet())
         {
-            Storage storage = (Storage) entry.getValue();
+            ImmutableStorage storage = entry.getValue();
 
-            final Map<String, Repository> repositories = storage.getRepositories();
-            for (Repository repository : repositories.values())
+            final Map<String, ImmutableRepository> repositories = storage.getRepositories();
+            for (ImmutableRepository repository : repositories.values())
             {
-                if (repository.allowsDeletion())
+                if (repository.isAllowsDelete())
                 {
                     logger.debug("Emptying trash for repository " + repository.getId() + "...");
 

@@ -29,7 +29,6 @@ import java.util.Set;
 /**
  * @author mtodorov
  */
-@Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "repository")
 public class Repository
@@ -110,7 +109,6 @@ public class Repository
     @XmlJavaTypeAdapter(ArtifactCoordinateValidatorsAdapter.class)
     private Map<String, String> artifactCoordinateValidators = new LinkedHashMap<>();
 
-    @Transient
     @XmlTransient
     private Storage storage;
 

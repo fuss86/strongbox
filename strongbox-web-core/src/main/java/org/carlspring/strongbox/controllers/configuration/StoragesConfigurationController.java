@@ -1,14 +1,11 @@
 package org.carlspring.strongbox.controllers.configuration;
 
-import org.carlspring.strongbox.configuration.Configuration;
-import org.carlspring.strongbox.configuration.ImmutableConfiguration;
 import org.carlspring.strongbox.providers.io.RepositoryPath;
 import org.carlspring.strongbox.repository.RepositoryManagementStrategyException;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
 import org.carlspring.strongbox.services.RepositoryManagementService;
 import org.carlspring.strongbox.services.StorageManagementService;
 import org.carlspring.strongbox.services.support.ConfigurationException;
-import org.carlspring.strongbox.storage.ImmutableStorage;
 import org.carlspring.strongbox.storage.Storage;
 import org.carlspring.strongbox.storage.indexing.RepositoryIndexManager;
 import org.carlspring.strongbox.storage.repository.ImmutableRepository;
@@ -105,7 +102,7 @@ public class StoragesConfigurationController
     public ResponseEntity getStorage(@ApiParam(value = "The storageId", required = true)
                                      @PathVariable final String storageId)
     {
-        final ImmutableStorage storage = configurationManagementService.getConfiguration().getStorage(storageId);
+        final Storage storage = configurationManagementService.getMutableConfigurationClone().getStorage(storageId);
 
         if (storage != null)
         {

@@ -78,9 +78,10 @@ public class ServerConfigurationController
                              MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getInstanceName(@RequestHeader(HttpHeaders.ACCEPT) String accept)
     {
-        if (configurationManagementService.getConfiguration().getInstanceName() != null)
+        String instanceName = configurationManagementService.getConfiguration().getInstanceName();
+        if (instanceName != null)
         {
-            return ResponseEntity.ok(getInstanceNameEntityBody(configurationManagementService.getConfiguration().getInstanceName(),
+            return ResponseEntity.ok(getInstanceNameEntityBody(instanceName,
                                                                accept));
         }
         else
@@ -132,9 +133,10 @@ public class ServerConfigurationController
                              MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity getBaseUrl(@RequestHeader(HttpHeaders.ACCEPT) String accept)
     {
-        if (configurationManagementService.getConfiguration().getBaseUrl() != null)
+        String baseUrl = configurationManagementService.getMutableConfigurationClone().getBaseUrl();
+        if (baseUrl != null)
         {
-            return ResponseEntity.ok(getBaseUrlEntityBody(configurationManagementService.getConfiguration().getBaseUrl(), accept));
+            return ResponseEntity.ok(getBaseUrlEntityBody(baseUrl, accept));
         }
         else
         {

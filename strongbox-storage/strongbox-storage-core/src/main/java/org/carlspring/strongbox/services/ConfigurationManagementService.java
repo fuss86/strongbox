@@ -16,6 +16,8 @@ import org.carlspring.strongbox.storage.routing.RuleSet;
 public interface ConfigurationManagementService
 {
 
+    Configuration getMutableConfigurationClone();
+
     ImmutableConfiguration getConfiguration();
 
     void setConfiguration(Configuration configuration);

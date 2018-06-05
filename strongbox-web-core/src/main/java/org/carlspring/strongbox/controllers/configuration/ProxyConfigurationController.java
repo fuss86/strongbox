@@ -1,6 +1,5 @@
 package org.carlspring.strongbox.controllers.configuration;
 
-import org.carlspring.strongbox.configuration.ImmutableProxyConfiguration;
 import org.carlspring.strongbox.configuration.ProxyConfiguration;
 import org.carlspring.strongbox.forms.configuration.ProxyConfigurationForm;
 import org.carlspring.strongbox.services.ConfigurationManagementService;
@@ -96,14 +95,15 @@ public class ProxyConfigurationController
                                                         String repositoryId,
                                                 @RequestHeader(HttpHeaders.ACCEPT) String acceptHeader)
     {
-        ImmutableProxyConfiguration proxyConfiguration;
+        ProxyConfiguration proxyConfiguration;
         if (storageId == null)
         {
-            proxyConfiguration = configurationManagementService.getConfiguration().getProxyConfiguration();
+            proxyConfiguration = configurationManagementService.getMutableConfigurationClone()
+                                                               .getProxyConfiguration();
         }
         else
         {
-            proxyConfiguration = configurationManagementService.getConfiguration()
+            proxyConfiguration = configurationManagementService.getMutableConfigurationClone()
                                                                .getStorage(storageId)
                                                                .getRepository(repositoryId)
                                                                .getProxyConfiguration();

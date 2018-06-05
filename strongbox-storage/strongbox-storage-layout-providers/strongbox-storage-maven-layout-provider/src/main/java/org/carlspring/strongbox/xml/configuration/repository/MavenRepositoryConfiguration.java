@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @author carlspring
  */
-@Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "maven-repository-configuration")
 public class MavenRepositoryConfiguration
