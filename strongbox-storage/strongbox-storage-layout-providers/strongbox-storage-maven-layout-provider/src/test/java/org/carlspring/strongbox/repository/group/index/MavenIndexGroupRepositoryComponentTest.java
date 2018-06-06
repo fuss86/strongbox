@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.hamcrest.Matchers;
 import org.junit.Assume;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +35,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Przemyslaw Fusik
  */
-@Ignore // the best test fix ever 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = Maven2LayoutProviderTestConfig.class)
 public class MavenIndexGroupRepositoryComponentTest
@@ -73,7 +71,7 @@ public class MavenIndexGroupRepositoryComponentTest
         RepositoryIndexer indexer = repositoryIndexManager.get().getRepositoryIndexer(contextId);
 
         Repository repository = mavenRepositoryFactory.createRepository(REPOSITORY_LEAF_L);
-        createRepository(repository, STORAGE0);
+        repository.setStorage(configurationManagementService.getMutableConfigurationClone().getStorage(STORAGE0));
 
         LayoutProvider layoutProvider = layoutProviderRegistry.getProvider(repository.getLayout());
         RepositoryPath artifactFile = layoutProvider.resolve(new ImmutableRepository(repository)).resolve(artifactPath);
