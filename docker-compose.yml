@@ -13,11 +13,14 @@ services:
          echo ""
          sleep 5
          mkdir -p /workspace/.m2/repositories
+         export MAVEN_OPTS="-Xms4g -Xmx4g"
          mvn clean install -DskipTests -Dmaven.repo.local=/workspace/.m2/repositories
          cd strongbox-web-core
          mvn spring-boot:run -Dmaven.repo.local=/workspace/.m2/repositories
     ports:
       - 48080:48080
+    mem_limit: 4g
+    mem_reservation: 4g
     volumes:
       - ./:/workspace
     working_dir: /workspace
